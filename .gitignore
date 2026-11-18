@@ -3,3 +3,10 @@ __pycache__/
 node_modules/
 dist/
 .DS_Store
+
+# skills de terceiros (reclonar com tools/setup_skills.sh)
+.claude/skills/pixel-art-studio/
+.claude/skills/codixel/
+.claude/skills/claude-video/
+# frames e estudo de material de terceiros (ficam no repo privado)
+frames_estudo/
