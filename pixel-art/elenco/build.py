@@ -123,25 +123,69 @@ def arms_down(s, C, cx=24):
     part(s, "arms", [("e", (cx - 11, 27, cx - 6, 36)), ("e", (cx + 5, 27, cx + 10, 36))], C)
 
 
-# ------------------------------------------------------------------ Chaz
-def chaz(s):
+# ------------------------------------------------------------------ Chaz (parametrizado p/ animação)
+EYES = {
+    "open":   EYE_OPEN,
+    "half":   ["......", "......", "......", "kkkkkk", "cmmmmc", "clllwc", ".cccc."],
+    "blink":  ["......", "......", "......", "......", "k....k", ".kkkk.", "......"],   # fechado relaxado
+    "happy":  ["......", "......", "......", "..kk..", ".k..k.", "k....k", "......"],   # ^^
+}
+MOUTHS = {"happy": MOUTH_HAPPY, "open": [".kk.", "kppk", "kppk", ".kk."], "small": ["k..k", ".kk."]}
+NOTE = ["..#.", "..##", "..#.", "###.", "##.."]                                       # notinha ♪
+
+
+def mirror_box(a):
+    return (47 - a[2], a[1], 47 - a[0], a[3])
+
+
+ARM = {   # caixa da elipse do braço ESQUERDO (o direito é o espelho)
+    "down": (13, 27, 18, 36), "fwd": (13, 26, 18, 34), "back": (12, 28, 17, 37),
+    "out": (8, 27, 17, 32), "up": (10, 17, 15, 27),
+}
+
+
+def chaz(s, p=None):
+    p = p or {}
     C = CHAZ; cx = 24
-    part(s, "tail", [("p", [(cx + 4, 37), (cx + 10, 36), (cx + 13, 32), (cx + 13, 28), (cx + 15, 27), (cx + 16, 30),
-                            (cx + 18, 28), (cx + 18, 33), (cx + 15, 38), (cx + 9, 41), (cx + 4, 41)])], C)
-    body(s, C, cx)
-    mark3(s, cx - 2, 29, C["mark"])
-    arms_down(s, C, cx)
-    part(s, "nub", [("e", (cx - 2, 2, cx + 1, 6))], C, outline=True)
-    part(s, "head", [("e", (cx - 13, 4, cx + 12, 27))], C, shift=2,
-         light=[("e", (cx - 11, 5, cx + 1, 13))])
-    # orelhas caídas moderadas: abraçam a cabeça e terminam na bochecha
-    part(s, "ears", [("p", [(cx - 12, 9), (cx - 18, 7), (cx - 15, 10), (cx - 19, 12), (cx - 13, 14)]),
-                     ("e", (cx - 17, 9, cx - 10, 25)), ("e", (cx + 9, 9, cx + 16, 25))], C,
-         light=[("e", (cx - 16, 10, cx - 13, 16))])
+    by = p.get("by", 0)                      # corpo
+    hy = p.get("hy", by)                     # cabeça (pode atrasar em relação ao corpo)
+    hx = p.get("hx", 0)                      # cabeça balançando pro lado
+    eL, eR = p.get("ear", (0, 0))            # ponta das orelhas (+ desce, - sobe)
+    lL, lR = p.get("legs", (0, 0))           # pé levantado
+    sp = p.get("spread", 0)
+    aL, aR = p.get("arms", ("down", "down"))
+    w = p.get("wag", 0)
+    # rabo (a ponta abana)
+    tail = [(cx + 4, 37), (cx + 10, 36), (cx + 13 + w, 32), (cx + 13 + w, 28), (cx + 15 + w, 27), (cx + 16 + w, 30),
+            (cx + 18 + w, 28), (cx + 18 + w, 33), (cx + 15, 38), (cx + 9, 41), (cx + 4, 41)]
+    part(s, "tail", [("p", [(x, y + by) for x, y in tail])], C)
+    # pernas: ficam no chão; o corpo sobe/desce por cima
+    legs = []
+    for x0, lift in ((cx - 6 - sp, lL), (cx + 1 + sp, lR)):
+        legs += [("r", (x0, 36 + by, x0 + 4, 43 - lift)), ("e", (x0 - 1, 41 - lift, x0 + 5, 46 - lift))]
+    part(s, "legs", legs, C)
+    part(s, "body", [("e", (cx - 7, 25 + by, cx + 6, 39 + by))], C, light=[("e", (cx - 6, 26 + by, cx - 1, 31 + by))])
+    mark3(s, cx - 2, 29 + by, C["mark"])
+    la, ra = ARM[aL], mirror_box(ARM[aR])
+    part(s, "arms", [("e", (la[0], la[1] + by, la[2], la[3] + by)), ("e", (ra[0], ra[1] + by, ra[2], ra[3] + by))], C)
+    # cabeça
+    part(s, "nub", [("e", (cx - 2 + hx, 2 + hy, cx + 1 + hx, 6 + hy))], C)
+    part(s, "head", [("e", (cx - 13 + hx, 4 + hy, cx + 12 + hx, 27 + hy))], C, shift=2,
+         light=[("e", (cx - 11 + hx, 5 + hy, cx + 1 + hx, 13 + hy))])
+    part(s, "ears", [("p", [(x + hx, y + hy) for x, y in
+                            ((cx - 12, 9), (cx - 18, 7), (cx - 15, 10), (cx - 19, 12), (cx - 13, 14))]),
+                     ("e", (cx - 17 + hx, 9 + hy, cx - 10 + hx, 25 + hy + eL)),
+                     ("e", (cx + 9 + hx, 9 + hy, cx + 16 + hx, 25 + hy + eR))], C,
+         light=[("e", (cx - 16 + hx, 10 + hy, cx - 13 + hx, 16 + hy))])
     s.layer("face")
-    for (x, y) in ((cx - 8, 7), (cx - 7, 6), (cx - 6, 6), (cx - 5, 5)):    # brilho em arco no topo
-        s.px(x, y, C["hl"])
-    face(s, C, cx, 14, EYE_OPEN, MOUTH_HAPPY)
+    for (x, y) in ((cx - 8, 7), (cx - 7, 6), (cx - 6, 6), (cx - 5, 5)):
+        s.px(x + hx, y + hy, C["hl"])
+    face(s, C, cx + hx, 14 + hy, EYES[p.get("eyes", "open")], MOUTHS[p.get("mouth", "happy")])
+    if p.get("note"):                                            # notinha musical (efeito)
+        nx, ny = p["note"]
+        s.layer("fx")
+        stamp(s, NOTE, nx, ny, {"#": C["white"]})
+        s.outline(C["ol"], where="outside")
 
 
 # ------------------------------------------------------------------ Riley
@@ -195,7 +239,7 @@ def fumaca(s):
     face(s, C, cx, 14, EYE_SLEEPY, MOUTH_SMALL)
 
 
-LAYERS = ["tail", "legs", "body", "mark", "arms", "nub", "ears_back", "head", "ears", "face"]
+LAYERS = ["tail", "legs", "body", "mark", "arms", "nub", "ears_back", "head", "ears", "face", "fx"]
 CAST = [("chaz", chaz), ("riley", riley), ("fumaca", fumaca)]
 
 if __name__ == "__main__":

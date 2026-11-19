@@ -9,7 +9,7 @@
 |---|---|
 | Gênero | Drama / terror / RPG interativo de decisões. **Sem combate**: fugir, se esconder, observar, escolher. |
 | Classificação | **+18**. Temas pesados tratados sem aliviar. Momentos felizes, tristes e de ameaça. |
-| Personagens jogáveis | **3**: Chaz, Riley e o terceiro (nome a definir). A troca de perspectiva é dirigida pela história: quando um morre ou quando a trama precisa daquele ponto de vista. |
+| Personagens jogáveis | **3**: Chaz, Riley e Névoa (masculino). A troca de perspectiva é dirigida pela história: quando um morre ou quando a trama precisa daquele ponto de vista. |
 | Referência de jogabilidade | O *jeito de jogar* de **Detroit: Become Human** (escolhas que ramificam, morte permanente, fluxograma de capítulo) e **House 2** (o mundo reage ao que você faz). Nenhum conteúdo, personagem ou trama desses jogos. |
 | Primeira versão | **Capítulo 1**, 10–15 min, **3 finais**. |
 | Plataforma | HTML5 + JavaScript (Phaser 3), Android via Capacitor. Controle por toque **e** teclado. |
@@ -70,7 +70,7 @@ Todo esse conteúdo está a serviço da história.
 
 ## 6. Produção — ordem de trabalho
 
-1. **Sprites** (48×48): Chaz → Riley → terceiro. Idle e andar nas 3 direções, agachar/esconder, variação com lanterna. Cada passo revisado com o diretor antes do próximo.
+1. **Sprites** (48×48): Chaz → Riley → Névoa. Idle e andar nas 3 direções, agachar/esconder, variação com lanterna. Cada passo revisado com o diretor antes do próximo.
 2. **Protótipo jogável**: Vite + Phaser 3, joystick virtual + botão de ação, teclado (WASD/setas + E/Espaço), escuridão + lanterna, esconderijo. Testado com Playwright (screenshot e gravação).
 3. **Cenários** do Cap. 1 (trigal ao pôr do sol, trigal à noite, casa da fazenda).
 4. **Conteúdo**: diálogos, escolhas, flags, 3 finais, fluxograma.
