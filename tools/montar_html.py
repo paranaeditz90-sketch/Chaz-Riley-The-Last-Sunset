@@ -18,7 +18,7 @@ import sys
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 G = os.path.join(RAIZ, "game")
 # ordem importa: quem é usado vem antes de quem usa
-ORDEM = ["src/dialogo.js", "src/luz.js", "src/scenes/Teste.js", "src/main.js"]
+ORDEM = ["src/estado.js", "src/dialogo.js", "src/luz.js", "src/scenes/Teste.js", "src/main.js"]
 
 
 def b64(path):

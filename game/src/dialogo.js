@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { marcar, registrarEscolha } from "./estado.js";
 
 // Falas no estilo dos vídeos do Bruce: bilhete de papel rasgado, letra de mão na cor de quem fala.
 // A "voz" é o som do bicho (decisão do diretor): cachorro late, gato mia. Nada de fala gravada.
@@ -25,7 +26,14 @@ export const CONVERSAS = {
   "riley>chaz": [
     ["riley", "POR QUE VOCÊ TÁ ME OLHANDO ASSIM?"],
     ["chaz", "TÔ OLHANDO SUAS ORELHAS."],
-    ["riley", "...NÃO."],
+    {
+      id: "teste_orelhas", quem: "riley", tempo: 6,
+      opcoes: [
+        { texto: "NÃO.", depois: [["chaz", "...TÁ BOM. TÁ BOM."]] },
+        { texto: "...TÁ. PODE OLHAR.", depois: [["chaz", "ELAS MEXEM QUANDO VOCÊ FINGE QUE NÃO LIGA."], ["riley", "CALA A BOCA, CHAZ."]] },
+      ],
+      silencio: [["chaz", "...VOU ENTENDER ESSE SILÊNCIO COMO UM SIM."]],
+    },
   ],
   "riley>nevoa": [
     ["riley", "VOCÊ TÁ COM CARA DE QUEM NÃO DORME FAZ DIAS."],
@@ -105,7 +113,7 @@ export class Dialogo {
   // falas: [[quemFala, texto], ...]; atores: { chaz: sprite, ... }
   iniciar(falas, atores, aoTerminar) {
     this.ativo = true;
-    this.falas = falas;
+    this.falas = falas.slice(); // cópia: a escolha insere as falas do caminho escolhido
     this.atores = atores;
     this.i = -1;
     this.aoTerminar = aoTerminar;
@@ -116,7 +124,7 @@ export class Dialogo {
 
   // toque/tecla: se a fala ainda está aparecendo, mostra tudo; senão, vai pra próxima
   avancar() {
-    if (!this.ativo) return;
+    if (!this.ativo || this.escolhendo) return;
     if (this.revelando) {
       this.revelando = false;
       this.mostrarTudo();
@@ -134,6 +142,7 @@ export class Dialogo {
     }
     this.i++;
     if (this.i >= this.falas.length) return this.fechar();
+    if (!Array.isArray(this.falas[this.i])) return this.mostrarEscolha(this.falas[this.i]);
     const [quem, texto] = this.falas[this.i];
     const f = FALANTES[quem];
     const ator = this.atores[quem];
@@ -200,6 +209,70 @@ export class Dialogo {
     }
     this.txt.setText(out.join("\n"));
     if (n >= this.linhas.join("").length) this.revelando = false;
+  }
+
+  // ---------------------------------------------------------------- escolha (com tempo: o silêncio também é escolha)
+  // item: { id, quem, opcoes: [{ texto, depois: [[quem, fala]...], flag }], tempo: segundos, silencio: [...], flagSilencio }
+  mostrarEscolha(item) {
+    const cena = this.cena;
+    const f = FALANTES[item.quem];
+    this.escolhendo = item;
+    const W = cena.scale.width;
+    const H = cena.scale.height;
+    const cards = [];
+    const larg = Math.min(560, (W - 160) / item.opcoes.length - 30);
+    item.opcoes.forEach((op, i) => {
+      const txt = cena.add.text(0, 0, op.texto, {
+        fontFamily: `"${f.fonte}", "Trebuchet MS", sans-serif`, fontSize: `${Math.round(f.tam * 0.8)}px`,
+        color: f.cor, align: "center", wordWrap: { width: larg - 80 }, padding: { left: 6, right: 10 },
+      }).setOrigin(0.5);
+      const num = cena.add.text(0, 0, String(i + 1), { fontFamily: "Trebuchet MS, sans-serif", fontSize: "26px", color: "#8a8a8a" })
+        .setOrigin(0.5);
+      const w = Math.max(larg, txt.width + 70);
+      const h = Math.max(110, txt.height + 50);
+      const g = cena.add.graphics();
+      desenharPapel(g, w, h, this.rnd);
+      g.setPosition(-w / 2, -h / 2);
+      num.setPosition(-w / 2 + 22, -h / 2 + 20);
+      const x = W / 2 + (i - (item.opcoes.length - 1) / 2) * (larg + 30);
+      const c = cena.add.container(x, H - 230, [g, txt, num]).setScrollFactor(0).setDepth(9.5e6)
+        .setAngle(this.rnd.realInRange(-2, 2)).setAlpha(0).setSize(w, h).setInteractive({ useHandCursor: true });
+      c.on("pointerdown", () => this.escolher(i));
+      cena.tweens.add({ targets: c, alpha: 1, y: H - 250, duration: 220, delay: i * 70, ease: "Back.easeOut" });
+      cards.push(c);
+    });
+    this.cards = cards;
+    // tempo: barra que encolhe na cor de quem escolhe
+    if (item.tempo) {
+      this.barra = cena.add.rectangle(W / 2, H - 120, W * 0.6, 8, Phaser.Display.Color.HexStringToColor(f.cor).color)
+        .setScrollFactor(0).setDepth(9.5e6);
+      this.barraTween = cena.tweens.add({ targets: this.barra, scaleX: 0, duration: item.tempo * 1000, onComplete: () => this.escolher(-1) });
+    }
+    this.tocar(`papel_${this.rnd.between(1, 3)}`, 0.3, 0.9);
+  }
+
+  escolher(i) {
+    const item = this.escolhendo;
+    if (!item) return;
+    this.escolhendo = null;
+    if (this.barraTween) this.barraTween.stop();
+    if (this.barra) this.barra.destroy();
+    this.barra = this.barraTween = null;
+    this.cards.forEach((c, k) => {
+      this.cena.tweens.add({ targets: c, alpha: 0, y: c.y + (k === i ? -30 : 30), duration: 200, onComplete: () => c.destroy() });
+    });
+    const op = i >= 0 ? item.opcoes[i] : null;
+    registrarEscolha(item.id, op ? i : "silencio");
+    if (op && op.flag) marcar(op.flag);
+    if (!op && item.flagSilencio) marcar(item.flagSilencio);
+    const depois = op ? op.depois || [] : item.silencio || [];
+    this.falas.splice(this.i + 1, 0, ...depois);
+    this.cena.time.delayedCall(220, () => this.proxima());
+  }
+
+  // teclas 1/2/3 durante a escolha
+  tecla(n) {
+    if (this.escolhendo && n < this.escolhendo.opcoes.length) this.escolher(n);
   }
 
   fechar() {

@@ -70,9 +70,10 @@ export class Luz {
     this.noite = false;
     this.angulo = Math.PI / 2; // começa apontando pra baixo (de frente)
     criarTexturas(cena);
-    const { width, height } = cena.scale;
-    this.rt = cena.add.renderTexture(0, 0, width, height).setOrigin(0).setScrollFactor(0).setDepth(7e6).setVisible(false);
-    cena.scale.on("resize", (g) => this.rt.resize(g.width, g.height));
+    // camada do breu: recriada quando a tela muda de tamanho (entrar em tela cheia no celular). Só redimensionar
+    // deixava o desenho da luz deslocado pela metade da diferença e parte da tela sem escuro.
+    this.criarBreu(cena.scale.width, cena.scale.height);
+    cena.scale.on("resize", (g) => this.criarBreu(g.width, g.height));
     this.cone = cena.make.image({ key: "luz_cone", add: false }).setOrigin(0, 0.5);
     this.halo = cena.make.image({ key: "luz_halo", add: false }).setOrigin(0.5);
     // sombra e contorno de cada personagem (cópias do próprio sprite, pintadas)
@@ -81,6 +82,12 @@ export class Luz {
       c.contorno = cena.add.sprite(0, 0, c.s.texture.key).setOrigin(0.5, c.s.originY).setTintFill(0x8f86a8)
         .setDepth(7e6 + 1).setVisible(false);
     }
+  }
+
+  criarBreu(w, h) {
+    if (this.rt) this.rt.destroy();
+    this.rt = this.cena.add.renderTexture(0, 0, Math.ceil(w), Math.ceil(h)).setOrigin(0).setScrollFactor(0).setDepth(7e6)
+      .setVisible(!!this.noite);
   }
 
   ligarNoite(noite) {

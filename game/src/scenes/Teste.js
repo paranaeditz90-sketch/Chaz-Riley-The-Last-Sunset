@@ -95,9 +95,9 @@ export default class Teste extends Phaser.Scene {
 
     this.keys = this.input.keyboard.addKeys("W,A,S,D,UP,DOWN,LEFT,RIGHT,SHIFT,TAB,ONE,TWO,THREE,C,E,SPACE");
     this.input.keyboard.on("keydown-TAB", () => this.trocar((this.ativo + 1) % this.chars.length));
-    this.input.keyboard.on("keydown-ONE", () => this.trocar(0));
-    this.input.keyboard.on("keydown-TWO", () => this.trocar(1));
-    this.input.keyboard.on("keydown-THREE", () => this.trocar(2));
+    // 1/2/3: na escolha, escolhe; fora dela, troca de personagem
+    ["ONE", "TWO", "THREE"].forEach((k, n) =>
+      this.input.keyboard.on(`keydown-${k}`, () => (this.dialogo.ativo ? this.dialogo.tecla(n) : this.trocar(n))));
 
     this.criarHud();
     this.criarToque();
@@ -236,7 +236,7 @@ export default class Teste extends Phaser.Scene {
   }
 
   trocar(i) {
-    if (i === this.ativo || this.trocando || i >= this.chars.length) return;
+    if (i === this.ativo || this.trocando || i >= this.chars.length || (this.dialogo && this.dialogo.ativo)) return;
     const antigo = this.chars[this.ativo];
     antigo.moving = false;
     this.parar(antigo);
