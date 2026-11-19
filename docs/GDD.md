@@ -13,7 +13,7 @@
 | Referência de jogabilidade | O *jeito de jogar* de **Detroit: Become Human** (escolhas que ramificam, morte permanente, fluxograma de capítulo) e **House 2** (o mundo reage ao que você faz). Nenhum conteúdo, personagem ou trama desses jogos. |
 | Primeira versão | **Capítulo 1**, 10–15 min, **3 finais**. |
 | Plataforma | HTML5 + JavaScript (Phaser 3), Android via Capacitor. Controle por toque **e** teclado. |
-| Arte | Pixel art desenhada do zero por script (Python/Pillow, `pixel-art-studio`). **Proibido** conversor automático imagem→pixel. Frames 48×48, paleta ≤16 cores por personagem, contorno limpo, sombra com hue shift. |
+| Arte | Estilo da folha do Chaz feita no Gemini (v2), **aprovado pelo diretor**: pixel art chibi, cor chapada, contorno preto grosso. As folhas vêm do Gemini (prompts em `docs/PROMPTS_GEMINI.md`) e são restauradas pro grid real por script (`tools/restore_gemini.py`), sem borrar; olhos e marca do peito redesenhados à mão. **Proibido** conversor de desenho→pixel (o que borra). Quadro 96×96, paleta curta por personagem. Volume e sombra vêm da iluminação do jogo, não do sprite. |
 
 ## 2. Pilares
 
@@ -70,7 +70,7 @@ Todo esse conteúdo está a serviço da história.
 
 ## 6. Produção — ordem de trabalho
 
-1. **Sprites** (48×48): Chaz → Riley → Névoa. Idle e andar nas 3 direções, agachar/esconder, variação com lanterna. Cada passo revisado com o diretor antes do próximo.
+1. **Sprites** (96×96, Gemini → restauração): Chaz (feito, falta correr de costas) → Riley → Névoa. Depois, extras de terror (agachar/esconder, susto, medo). Cada passo revisado com o diretor antes do próximo.
 2. **Protótipo jogável**: Vite + Phaser 3, joystick virtual + botão de ação, teclado (WASD/setas + E/Espaço), escuridão + lanterna, esconderijo. Testado com Playwright (screenshot e gravação).
 3. **Cenários** do Cap. 1 (trigal ao pôr do sol, trigal à noite, casa da fazenda).
 4. **Conteúdo**: diálogos, escolhas, flags, 3 finais, fluxograma.
@@ -79,9 +79,9 @@ Todo esse conteúdo está a serviço da história.
 ## 7. Referências de arte (resumo do estudo)
 
 - O traço do Bruce Bronze evoluiu de quase sem linha (set/2026) para linha preta média/grossa e cor chapada (out–nov/2026). Os sprites seguem a fase atual: **contorno escuro em todo o personagem**.
-- O Bruce não usa hue shift. **Nós usamos** (é regra de pixel art): sombra do Chaz gira pro violeta, a da Riley pro magenta.
+- O Bruce não usa hue shift, e o estilo Gemini aprovado também é chapado. Hue shift fica pra cenário e iluminação.
 - Proporção: Chaz ≈ 3 cabeças de altura. Na Riley, as orelhas somam ~14% da altura e são a silhueta dela.
-- Rampas iniciais: Chaz `#250d5c #211294 #1a28d8 #4270ed #7dbbfa` · Riley `#4c0021 #67001e #7e0c1c #9d302f #b86b5c` · comuns `#0a0612` (contorno) `#f3e6b0` (esclera) `#8a4fd8` (íris) `#3a1a6a` (pupila) `#f4f4f8` (marca "3").
+- Paleta do Chaz (folha final): `#2a3be8` (corpo) `#000000` (contorno) `#ffffff` (olho e "3") `#8a4fd8` (íris) `#3a1a6a` (pupila) `#ff6f91` (boca). Riley e Névoa: definidas quando as folhas chegarem.
 
 ## 8. Avisos de projeto
 
