@@ -60,6 +60,22 @@ export default class Teste extends Phaser.Scene {
     });
     this.ativo = 0;
     this.trocando = false;
+    for (const c of this.chars) this.agendarVida(c, 0);
+
+    const pg = this.make.graphics({ x: 0, y: 0 }, false);
+    pg.fillStyle(0xd8c08a);
+    pg.fillCircle(6, 6, 6);
+    pg.generateTexture("poeira", 12, 12);
+    pg.destroy();
+    this.poeira = this.add.particles(0, 0, "poeira", {
+      lifespan: 420,
+      speed: { min: 18, max: 55 },
+      angle: { min: 200, max: 340 },
+      scale: { start: 0.9, end: 0.1 },
+      alpha: { start: 0.55, end: 0 },
+      gravityY: -20,
+      emitting: false,
+    });
 
     const cam = this.cameras.main;
     cam.setBounds(0, 0, MUNDO_W, MUNDO_H);
@@ -100,6 +116,7 @@ export default class Teste extends Phaser.Scene {
     const antigo = this.chars[this.ativo];
     antigo.moving = false;
     this.parar(antigo);
+    this.agendarVida(antigo, this.time.now);
     this.ativo = i;
     const c = this.chars[i];
     this.trocando = true;
@@ -118,6 +135,7 @@ export default class Teste extends Phaser.Scene {
     // tempo real do quadro (o delta suavizado do Phaser fica em 16 ms mesmo quando o aparelho cai pra 30 fps,
     // e o personagem andaria em câmera lenta); teto de 100 ms pra não teleportar depois de travada
     const dt = Math.min(this.game.loop.rawDelta, 100) / 1000;
+    const agora = this.time.now;
     const k = this.keys;
     let vx = (k.D.isDown || k.RIGHT.isDown ? 1 : 0) - (k.A.isDown || k.LEFT.isDown ? 1 : 0);
     let vy = (k.S.isDown || k.DOWN.isDown ? 1 : 0) - (k.W.isDown || k.UP.isDown ? 1 : 0);
@@ -138,14 +156,93 @@ export default class Teste extends Phaser.Scene {
       c.s.y = Phaser.Math.Clamp(c.s.y + ny * v * dt, 220, MUNDO_H - 20);
       c.facing = this.direcao(c, nx, ny);
       c.moving = true;
+      c.extraAte = 0;
       c.s.play(`${c.nome}:${c.facing}_${correr ? "correr" : "andar"}`, true);
+      this.balancarTrigo(c, nx);
+      if (correr && agora >= (c.poeiraEm || 0)) {
+        this.poeira.setDepth(c.s.y - 1);
+        this.poeira.explode(2, c.s.x - nx * 18, c.s.y - 4);
+        c.poeiraEm = agora + 110;
+      }
     } else if (c.moving) {
       c.moving = false;
       this.parar(c);
+      this.agendarVida(c, agora);
     }
 
-    for (const ch of this.chars) ch.s.setDepth(ch.s.y);
+    for (const ch of this.chars) {
+      this.vida(ch, agora);
+      ch.s.setDepth(ch.s.y);
+    }
     this.desenharJoystick();
+  }
+
+  // ---------------------------------------------------------------- vida: parado não é estátua
+  // Usa o que existir no sprites.json: {direção}_piscar, frente_olhar_esq/dir, gesto.
+  // Personagem sem esses quadros ainda (Riley, Névoa) só fica parado até a folha nova chegar.
+  anim(c, nome) {
+    return this.meta.characters[c.nome].anims[nome];
+  }
+
+  agendarVida(c, agora) {
+    c.piscarEm = agora + Phaser.Math.Between(1800, 4800);
+    c.olharEm = agora + Phaser.Math.Between(7000, 13000);
+    c.gestoEm = agora + Phaser.Math.Between(12000, 20000);
+    c.extraAte = 0;
+  }
+
+  vida(c, agora) {
+    if (c.moving) return;
+    if (c.extraAte) {
+      if (agora < c.extraAte) return;
+      c.extraAte = 0;
+      this.parar(c);
+    }
+    const tocar = (nome, segurar) => {
+      const a = this.anim(c, nome);
+      c.s.play(`${c.nome}:${nome}`);
+      c.extraAte = agora + (a.frames.length * 1000) / a.fps + segurar;
+    };
+    if (agora >= c.piscarEm) {
+      // às vezes pisca duas vezes seguidas, como gente
+      c.piscarEm = agora + (Math.random() < 0.2 ? 280 : Phaser.Math.Between(2200, 5200));
+      if (this.anim(c, `${c.facing}_piscar`)) return tocar(`${c.facing}_piscar`, 50);
+    }
+    if (c.facing === "frente" && agora >= c.olharEm) {
+      c.olharEm = agora + Phaser.Math.Between(8000, 14000);
+      const lado = Math.random() < 0.5 ? "frente_olhar_esq" : "frente_olhar_dir";
+      if (this.anim(c, lado)) return tocar(lado, Phaser.Math.Between(600, 1100));
+    }
+    if (agora >= c.gestoEm) {
+      c.gestoEm = agora + Phaser.Math.Between(15000, 25000);
+      if (this.anim(c, "gesto")) {
+        c.facing = "frente";
+        return tocar("gesto", 1400);
+      }
+    }
+  }
+
+  // trigo balança quando alguém passa (e volta com mola)
+  balancarTrigo(c, nx) {
+    for (const w of this.trigos) {
+      if (w.balancando) continue;
+      const dx = w.x - c.s.x;
+      const dy = w.y - c.s.y;
+      if (Math.abs(dx) < 46 && dy > -26 && dy < 22) {
+        w.balancando = true;
+        const lado = Math.sign(dx || nx || 1);
+        this.tweens.chain({
+          targets: w,
+          tweens: [
+            { angle: lado * Phaser.Math.Between(10, 16), duration: 110, ease: "Sine.easeOut" },
+            { angle: 0, duration: 900, ease: "Elastic.easeOut", easeParams: [1.2, 0.35] },
+          ],
+          onComplete: () => {
+            w.balancando = false;
+          },
+        });
+      }
+    }
   }
 
   // ---------------------------------------------------------------- cenário provisório
@@ -172,12 +269,14 @@ export default class Teste extends Phaser.Scene {
     g.destroy();
 
     this.add.tileSprite(0, 0, MUNDO_W, MUNDO_H, "chao").setOrigin(0).setDepth(-1e6);
+    this.trigos = [];
     const livre = [[2960, 1650], [3200, 1600], [3440, 1660]];
     for (let i = 0; i < 760; i++) {
       const x = rnd.between(40, MUNDO_W - 40);
       const y = rnd.between(120, MUNDO_H - 10);
       if (livre.some(([lx, ly]) => Math.hypot(lx - x, ly - y) < 320)) continue;
-      this.add.image(x, y, "trigo").setOrigin(0.5, 1).setDepth(y).setFlipX(rnd.frac() < 0.5).setScale(rnd.realInRange(0.9, 1.25));
+      const w = this.add.image(x, y, "trigo").setOrigin(0.5, 1).setDepth(y).setFlipX(rnd.frac() < 0.5).setScale(rnd.realInRange(0.9, 1.25));
+      this.trigos.push(w);
     }
   }
 

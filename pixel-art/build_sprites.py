@@ -21,7 +21,8 @@ from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
-from sheet_copy import color_match, despeckle, grid, head_cx, key_checker, key_green, load, place, trocar_cabeca  # noqa: E402
+from sheet_copy import (  # noqa: E402
+    color_match, despeckle, grid, head_cx, key_checker, key_green, load, place, trocar_cabeca, trocar_rosto)
 
 PA = os.path.join(ROOT, "pixel-art")
 GAME = os.path.join(ROOT, "game", "public", "assets", "sprites")
@@ -47,9 +48,15 @@ def chaz():
     rows = {}
     for r, d in enumerate(DIRS[:3]):
         rows[d] = [v2[(r, c)] for c in range(7)]
+    # de frente o Gemini fez andar (2 de 3) e correr (3 de 3) de olho fechado: rosto do parado, mesma folha
+    AZUL = (26, 52, 225)
+    for c in (1, 2, 4, 5, 6):
+        rows["frente"][c] = trocar_rosto(v2[(0, c)], v2[(0, 0)], AZUL)
     rows["costas"] = [costas[(0, c)] for c in range(7)]
-    rows["extras"] = [v2[(3, 4)], v2[(3, 5)], v2[(3, 6)]]
-    extras = {"comemorar": [0], "extra_braços": [1], "extra_passo": [2]}
+    # piscada de frente: rosto de olho fechado do Gemini (andar 1) no quadro parado
+    piscar = trocar_rosto(v2[(0, 0)], v2[(0, 1)], AZUL)
+    rows["extras"] = [v2[(3, 4)], v2[(3, 5)], v2[(3, 6)], piscar]
+    extras = {"comemorar": [0], "extra_braços": [1], "extra_passo": [2], "frente_piscar": [3]}
     return rows, extras, f"costas: linha avulsa reduzida {s:.3f}x"
 
 
@@ -106,7 +113,7 @@ for nome, (rows, extras, note) in chars.items():
     if "extras" in order:
         base = order.index("extras") * NCOL
         for k, fs in extras.items():
-            anims[k] = {"frames": [base + i for i in fs], "fps": 1, "repeat": 0}
+            anims[k] = {"frames": [base + i for i in fs], "fps": 12 if k.endswith("_piscar") else 4, "repeat": 0}
     meta["characters"][nome] = {"image": f"assets/sprites/{nome}.png", "rows": order, "anims": anims}
 
     def gif(name, keys, ms):

@@ -260,3 +260,53 @@ def trocar_cabeca(run, walk, abaixo_do_olho=20):
     out[zona & pele & (dist <= 3), :3] = (5, 2, 1)
     ys, xs = np.nonzero(out[..., 3] > 0)
     return out[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+
+
+def trocar_rosto(alvo, fonte, cor_corpo):
+    """Chaz de frente: o Gemini fez andar/correr de olho fechado. Copia o rosto (olhos, nariz, boca)
+    de um quadro de olho aberto da MESMA folha pro quadro alvo, alinhado pelo contorno da cabeça.
+    Também serve ao contrário (rosto de olho fechado num quadro parado = piscada)."""
+    def mask_cabeca(f, h):
+        return f[:h, :, 3] > 0
+    c = fonte[..., :3].astype(int)
+    olho = (fonte[..., 3] > 0) & (((c.min(-1) > 190)) | ((c[..., 2] > 150) & (c[..., 0] > 100) & (c[..., 1] < 130)))
+    olho[int(fonte.shape[0] * 0.5):] = False
+    if olho.sum() < 20:                                         # fonte de olho fechado: usa a faixa dos olhos do alvo
+        c2 = alvo[..., :3].astype(int)
+        olho = (alvo[..., 3] > 0) & (((c2.min(-1) > 190)) | ((c2[..., 2] > 150) & (c2[..., 0] > 100) & (c2[..., 1] < 130)))
+        olho[int(alvo.shape[0] * 0.5):] = False
+    ys, xs = np.nonzero(olho)
+    y0, y1, x0, x1 = ys.min() - 6, ys.max() + 13, xs.min() - 3, xs.max() + 3
+    # alinhamento: deslocamento que mais sobrepõe a silhueta da cabeça
+    h = y1 + 4
+    best = None
+    for dy in range(-6, 7):
+        for dx in range(-6, 7):
+            a = np.zeros((h + 20, max(alvo.shape[1], fonte.shape[1]) + 20), bool)
+            b = a.copy()
+            ma = mask_cabeca(alvo, min(h, alvo.shape[0]))
+            mf = mask_cabeca(fonte, min(h, fonte.shape[0]))
+            a[10:10 + ma.shape[0], 10:10 + ma.shape[1]] = ma
+            yy, xx = np.nonzero(mf)
+            yy, xx = yy + 10 + dy, xx + 10 + dx
+            ok = (yy >= 0) & (yy < b.shape[0]) & (xx >= 0) & (xx < b.shape[1])
+            b[yy[ok], xx[ok]] = True
+            s = (a & b).sum() / max(1, (a | b).sum())
+            if best is None or s > best[0]:
+                best = (s, dx, dy)
+    _, dx, dy = best
+    out = alvo.copy()
+    cor = np.array(cor_corpo, np.uint8)
+    for y in range(y0, y1 + 1):
+        for x in range(x0, x1 + 1):
+            ty, tx = y + dy, x + dx
+            if not (0 <= ty < out.shape[0] and 0 <= tx < out.shape[1]) or not out[ty, tx, 3]:
+                continue
+            if fonte[y, x, 3]:
+                out[ty, tx] = fonte[y, x]
+                # resto de JPEG quase da cor do corpo (risquinho fantasma onde era o olho) vira corpo
+                if np.abs(fonte[y, x, :3].astype(int) - cor.astype(int)).sum() < 70:
+                    out[ty, tx, :3] = cor
+            else:
+                out[ty, tx, :3] = cor
+    return out

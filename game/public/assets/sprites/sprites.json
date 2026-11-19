@@ -125,21 +125,28 @@
      "frames": [
       28
      ],
-     "fps": 1,
+     "fps": 4,
      "repeat": 0
     },
     "extra_braços": {
      "frames": [
       29
      ],
-     "fps": 1,
+     "fps": 4,
      "repeat": 0
     },
     "extra_passo": {
      "frames": [
       30
      ],
-     "fps": 1,
+     "fps": 4,
+     "repeat": 0
+    },
+    "frente_piscar": {
+     "frames": [
+      31
+     ],
+     "fps": 12,
      "repeat": 0
     }
    }

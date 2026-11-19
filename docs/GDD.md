@@ -48,6 +48,10 @@
 - **Fluxograma de fim de capítulo** com os ramos descobertos e os bloqueados (incentiva rejogar).
 - **Cutscenes com escolha de fala** (ideia do diretor, a detalhar): cenas no próprio motor do jogo (sprites, câmera, caixa de diálogo com retrato), sem vídeo pré-gravado.
 
+### Vida (parado não é estátua)
+- Parado, o personagem pisca sozinho (às vezes duas vezes), olha em volta e faz o gesto dele de vez em quando. Os outros dois, fora do controle, também.
+- O mundo reage: trigo balança e volta quando alguém passa, poeira ao correr.
+
 ### Troca de personagem
 - Ocorre em pontos de história e quando alguém morre ou desaparece.
 - Morte é permanente no save. Se todos caem, o capítulo termina num final próprio.
@@ -56,11 +60,13 @@
 
 Ramifica e depois converge em 3 finais:
 
-1. **Fim de tarde no trigal** (feliz). Os três no morro, linhas de transmissão, o pôr do sol. Escolhas pequenas de relacionamento.
-2. **A escuridão.** Algo errado acontece com o pôr do sol. Primeira regra do mundo.
-3. **Separação.** Ponto de vista de um, depois de outro. Esconder, lanterna, pistas.
-4. **A casa.** Reencontro e uma decisão de ação com consequência imediata.
-5. **Final A / B / C** + fluxograma.
+0. **Abertura** curta, antes do título.
+1. **A última tarde** (ideia do diretor): começa em casa e atravessa a cidade até o morro, apresentando os três e os moradores. O céu muda de cor enquanto você anda.
+2. **Fim de tarde no morro** (feliz). Os três, linhas de transmissão, o pôr do sol. Escolhas pequenas de relacionamento.
+3. **A escuridão.** Algo errado acontece com o pôr do sol. Primeira regra do mundo.
+4. **Separação.** Ponto de vista de um, depois de outro. Esconder, lanterna, pistas.
+5. **A casa.** Reencontro e uma decisão de ação com consequência imediata.
+6. **Final A / B / C** + fluxograma.
 
 Só um personagem fica garantido vivo no Cap. 1. Os outros dois podem ser perdidos conforme as escolhas.
 
