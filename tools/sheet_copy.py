@@ -353,3 +353,30 @@ def trocar_rosto(alvo, fonte, cor_corpo):
                 out[ty, tx, :3] = cor
     return out
 
+
+
+# ------------------------------------------------------------------ imagens de outras IAs (ChatGPT etc.)
+def tem_alfa(path):
+    """PNG com transparência de verdade (o ChatGPT costuma entregar assim)."""
+    im = Image.open(path)
+    if im.mode in ("RGBA", "LA") or (im.mode == "P" and "transparency" in im.info):
+        return (np.asarray(im.convert("RGBA"))[..., 3] < 128).mean() > 0.1
+    return False
+
+
+def key_alpha(path, scale=1.0):
+    """Usa a transparência do próprio arquivo, com alfa duro (sem borda meio transparente)."""
+    im = Image.open(path).convert("RGBA")
+    if scale != 1.0:
+        im = im.resize((round(im.width * scale), round(im.height * scale)), Image.BOX)
+    a = np.asarray(im).copy()
+    a[..., 3] = np.where(a[..., 3] >= 128, 255, 0).astype(np.uint8)
+    return a
+
+
+def fundo_verde(a):
+    """Cantos da imagem são verde chapado?"""
+    h, w = a.shape[:2]
+    cantos = np.concatenate([a[:10, :10].reshape(-1, 3), a[:10, -10:].reshape(-1, 3), a[-10:, :10].reshape(-1, 3), a[-10:, -10:].reshape(-1, 3)])
+    r, g, b = cantos[:, 0].astype(int), cantos[:, 1].astype(int), cantos[:, 2].astype(int)
+    return ((g > r + 40) & (g > b + 40)).mean() > 0.8

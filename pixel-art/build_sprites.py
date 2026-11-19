@@ -22,7 +22,8 @@ from PIL import Image
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 from sheet_copy import (  # noqa: E402
-    color_match, despeckle, grid, head_cx, key_checker, key_green, load, place, trocar_cabeca, trocar_rosto)
+    color_match, despeckle, fundo_verde, grid, head_cx, key_alpha, key_checker, key_green, load, place, tem_alfa,
+    trocar_cabeca, trocar_rosto)
 
 PA = os.path.join(ROOT, "pixel-art")
 GAME = os.path.join(ROOT, "game", "public", "assets", "sprites")
@@ -31,7 +32,12 @@ NCOL = 7  # parado, andar 1-3, correr 1-3
 
 
 def sheet(path, kind, nrows, ncols, scale=1.0):
+    """kind: "green", "checker" ou "auto" (transparência de verdade, verde ou xadrez, o que a imagem tiver)."""
+    if kind == "auto" and tem_alfa(path):
+        return grid(despeckle(key_alpha(path, scale)), nrows, ncols)
     a = load(path, scale)
+    if kind == "auto":
+        kind = "green" if fundo_verde(a) else "checker"
     k = key_green(a) if kind == "green" else key_checker(a)
     return grid(despeckle(k), nrows, ncols)
 

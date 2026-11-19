@@ -3,10 +3,11 @@ import Phaser from "phaser";
 // Falas no estilo dos vídeos do Bruce: bilhete de papel rasgado, letra de mão na cor de quem fala.
 // A "voz" é o som do bicho (decisão do diretor): cachorro late, gato mia. Nada de fala gravada.
 
+// cor do texto = cor do personagem (Chaz azul do sprite, Riley vermelho, Névoa chumbo), um pouco ajustada pra ler no papel
 export const FALANTES = {
-  chaz: { nome: "Chaz", cor: "#1f3fd8", fonte: "Patrick Hand", tam: 50, vozes: ["voz_chaz_1", "voz_chaz_2", "voz_chaz_3"], tom: [1.0, 1.12], vol: 0.55 },
-  riley: { nome: "Riley", cor: "#7a1426", fonte: "Permanent Marker", tam: 42, vozes: ["voz_riley_1", "voz_riley_2", "voz_riley_3"], tom: [0.95, 1.06], vol: 0.5 },
-  nevoa: { nome: "Névoa", cor: "#6a5a80", fonte: "Shadows Into Light", tam: 50, vozes: ["voz_nevoa_1", "voz_nevoa_2"], tom: [0.78, 0.88], vol: 0.45 },
+  chaz: { nome: "Chaz", cor: "#1a34e1", fonte: "Patrick Hand", tam: 50, vozes: ["voz_chaz_1", "voz_chaz_2", "voz_chaz_3"], tom: [1.0, 1.12], vol: 0.55 },
+  riley: { nome: "Riley", cor: "#b3122b", fonte: "Permanent Marker", tam: 42, vozes: ["voz_riley_1", "voz_riley_2", "voz_riley_3"], tom: [0.95, 1.06], vol: 0.5 },
+  nevoa: { nome: "Névoa", cor: "#4e3a46", fonte: "Shadows Into Light", tam: 50, vozes: ["voz_nevoa_1", "voz_nevoa_2"], tom: [0.78, 0.88], vol: 0.45 },
 };
 
 // Conversas curtas do teste (sem spoiler). Chave: "quem_fala>com_quem".
