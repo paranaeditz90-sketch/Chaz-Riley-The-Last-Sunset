@@ -175,8 +175,8 @@ for nome, (rows, named, note) in chars.items():
     for d in DIRS:
         base = order.index(d) * NCOL
         anims[f"{d}_parado"] = {"frames": [base], "fps": 1, "repeat": 0}
-        anims[f"{d}_andar"] = {"frames": [base + i for i in (1, 2, 3, 2)], "fps": 6.67, "repeat": -1}
-        anims[f"{d}_correr"] = {"frames": [base + i for i in (4, 5, 6, 5)], "fps": 10, "repeat": -1}
+        anims[f"{d}_andar"] = {"frames": [base + i for i in (1, 2, 3, 2)], "fps": 8, "repeat": -1}
+        anims[f"{d}_correr"] = {"frames": [base + i for i in (4, 5, 6, 5)], "fps": 12, "repeat": -1}
     for k, refs in named.items():
         fps = 12 if k.endswith("_piscar") else 3 if k == "gesto" else 4
         anims[k] = {"frames": [order.index(r) * NCOL + c for r, c in refs], "fps": fps, "repeat": 0}

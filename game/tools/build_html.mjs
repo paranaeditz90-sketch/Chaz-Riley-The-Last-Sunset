@@ -21,12 +21,22 @@ for (const nome of Object.keys(meta.characters)) {
   images[nome] = "data:image/png;base64," + readFileSync(join(spr, `${nome}.png`)).toString("base64");
 }
 
+// sons e letras de mão também vão dentro do arquivo
+const aud = join(raiz, "public/assets/audio");
+const audio = {};
+for (const f of readdirSync(aud).filter((f) => f.endsWith(".mp3"))) {
+  audio[f.replace(/\.mp3$/, "")] = "data:audio/mpeg;base64," + readFileSync(join(aud, f)).toString("base64");
+}
+
 let html = readFileSync(join(dist, "index.html"), "utf8");
+html = html.replace(/url\(assets\/fonts\/([^)]+\.ttf)\)/g, (_m, f) =>
+  `url(data:font/ttf;base64,${readFileSync(join(raiz, "public/assets/fonts", f)).toString("base64")})`);
 const tag = html.match(/<script type="module" crossorigin src="[^"]+"><\/script>/);
 if (!tag) throw new Error("não achei a tag do script no dist/index.html");
 html = html.replace(tag[0], "");
 const embutido =
   `<script>window.__SPRITES__ = ${JSON.stringify({ meta, images })};</script>\n` +
+  `<script>window.__AUDIO__ = ${JSON.stringify(audio)};</script>\n` +
   `<script type="module">\n${codigo}\n</script>\n`;
 html = html.replace("</body>", () => embutido + "</body>");
 writeFileSync(saida, html);

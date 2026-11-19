@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { CONVERSAS, Dialogo } from "../dialogo.js";
 
 // Cena de teste: os três personagens no jogo, andando/correndo nas 4 direções e trocando de ponto de vista.
 // Cenário provisório (chão e trigo de mentira). Lanterna, luz e sombra entram na próxima etapa.
@@ -7,10 +8,17 @@ const NOMES = { chaz: "Chaz", riley: "Riley", nevoa: "Névoa" };
 // mundo maior que qualquer tela: com a largura acompanhando a tela (EXPAND), 3600 sobrava faixa preta em tela muito larga
 const MUNDO_W = 6400;
 const MUNDO_H = 3200;
-const VEL_ANDAR = 230;
-const VEL_CORRER = 470;
+// velocidade casada com o passo do sprite (andar: ~44 px por passo; correr: ~63), senão o pé "patina"
+const VEL_ANDAR = 175;
+const VEL_CORRER = 380;
 const CAM_OFFSET_Y = 80; // câmera mira no corpo, não no pé
 const UI = 1e7;
+// sons carregados no teste (os arquivos saem de tools/montar_audio.py; créditos em game/CREDITOS.md)
+const AUDIO = [
+  "voz_chaz_1", "voz_chaz_2", "voz_chaz_3", "voz_riley_1", "voz_riley_2", "voz_riley_3", "voz_nevoa_1", "voz_nevoa_2",
+  "papel_1", "papel_2", "papel_3", "passo_grama_0", "passo_grama_1", "passo_grama_2", "passo_grama_3", "passo_grama_4",
+  "folhas", "vento_loop", "musica_entardecer",
+];
 
 export default class Teste extends Phaser.Scene {
   constructor() {
@@ -19,6 +27,8 @@ export default class Teste extends Phaser.Scene {
 
   preload() {
     // versão arquivo único (HTML): sprites e JSON já vêm embutidos na página, sem buscar arquivo nenhum
+    const aud = window.__AUDIO__;
+    for (const k of AUDIO) this.load.audio(k, aud ? aud[k] : `assets/audio/${k}.mp3`);
     const emb = window.__SPRITES__;
     if (emb) {
       this.cache.json.add("sprites", emb.meta);
@@ -82,7 +92,7 @@ export default class Teste extends Phaser.Scene {
     cam.setFollowOffset(0, CAM_OFFSET_Y);
     cam.startFollow(this.chars[0].s, true, 0.12, 0.12);
 
-    this.keys = this.input.keyboard.addKeys("W,A,S,D,UP,DOWN,LEFT,RIGHT,SHIFT,TAB,ONE,TWO,THREE,C");
+    this.keys = this.input.keyboard.addKeys("W,A,S,D,UP,DOWN,LEFT,RIGHT,SHIFT,TAB,ONE,TWO,THREE,C,E,SPACE");
     this.input.keyboard.on("keydown-TAB", () => this.trocar((this.ativo + 1) % this.chars.length));
     this.input.keyboard.on("keydown-ONE", () => this.trocar(0));
     this.input.keyboard.on("keydown-TWO", () => this.trocar(1));
@@ -90,6 +100,80 @@ export default class Teste extends Phaser.Scene {
 
     this.criarHud();
     this.criarToque();
+    this.dialogo = new Dialogo(this);
+    this.criarSom();
+  }
+
+  // ---------------------------------------------------------------- som
+  criarSom() {
+    this.somEm = {};
+    const comecar = () => {
+      this.musica = this.sound.add("musica_entardecer", { loop: true, volume: 0.3 });
+      this.vento = this.sound.add("vento_loop", { loop: true, volume: 0.2 });
+      this.musica.play();
+      this.vento.play();
+    };
+    if (this.sound.locked) this.sound.once("unlocked", comecar);
+    else comecar();
+    for (const c of this.chars) {
+      // passo quando o pé encosta no chão (quadros 1 e 3 do ciclo de andar/correr)
+      c.s.on("animationupdate", (anim, frame) => {
+        if (c !== this.chars[this.ativo] || !/_(andar|correr)$/.test(anim.key)) return;
+        if (frame.index === 1 || frame.index === 3) this.passo(anim.key.endsWith("correr"));
+      });
+    }
+  }
+
+  som(chave, vol, rate = 1, intervalo = 0) {
+    const agora = this.time.now;
+    if (intervalo && agora < (this.somEm[chave] || 0)) return;
+    this.somEm[chave] = agora + intervalo;
+    if (this.cache.audio.exists(chave)) this.sound.play(chave, { volume: vol, rate });
+  }
+
+  passo(correndo) {
+    const k = `passo_grama_${Phaser.Math.Between(0, 4)}`;
+    this.som(k, correndo ? 0.38 : 0.26, Phaser.Math.FloatBetween(0.9, 1.1));
+  }
+
+  // ---------------------------------------------------------------- conversa (bilhete + voz do bicho)
+  conversar() {
+    if (this.dialogo.ativo || this.trocando) return;
+    const c = this.chars[this.ativo];
+    let alvo = null;
+    let melhor = 300;
+    for (const o of this.chars) {
+      if (o === c) continue;
+      const d = Phaser.Math.Distance.Between(c.s.x, c.s.y, o.s.x, o.s.y);
+      if (d < melhor) {
+        melhor = d;
+        alvo = o;
+      }
+    }
+    if (!alvo) return;
+    const falas = CONVERSAS[`${c.nome}>${alvo.nome}`];
+    if (!falas) return;
+    // um olha pro outro
+    for (const [a, b] of [[c, alvo], [alvo, c]]) {
+      a.moving = false;
+      a.agachado = 0;
+      a.extraAte = 0;
+      a.facing = b.s.x < a.s.x ? "esquerda" : "direita";
+      this.parar(a);
+    }
+    const cam = this.cameras.main;
+    cam.stopFollow();
+    cam.pan((c.s.x + alvo.s.x) / 2, (c.s.y + alvo.s.y) / 2 - CAM_OFFSET_Y - 40, 600, "Sine.easeInOut");
+    this.hud.forEach((h) => h.setVisible(false));
+    const atores = {};
+    for (const o of this.chars) atores[o.nome] = o.s;
+    this.dialogo.iniciar(falas, atores, () => {
+      cam.pan(c.s.x, c.s.y - CAM_OFFSET_Y, 400, "Sine.easeInOut", false, (_c, p) => {
+        if (p === 1) cam.startFollow(c.s, true, 0.12, 0.12);
+      });
+      this.hud.forEach((h) => h.setVisible(true));
+      for (const o of this.chars) this.agendarVida(o, this.time.now);
+    });
   }
 
   // ---------------------------------------------------------------- personagens
@@ -147,6 +231,23 @@ export default class Teste extends Phaser.Scene {
     }
 
     const c = this.chars[this.ativo];
+    if (Phaser.Input.Keyboard.JustDown(k.E) || Phaser.Input.Keyboard.JustDown(k.SPACE)) {
+      if (this.dialogo.ativo) this.dialogo.avancar();
+      else this.conversar();
+    }
+    if (this.dialogo.ativo) {
+      this.dialogo.update();
+      if (c.moving) {
+        c.moving = false;
+        this.parar(c);
+      }
+      for (const ch of this.chars) {
+        this.vida(ch, agora);
+        ch.s.setDepth(ch.s.y);
+      }
+      this.desenharJoystick();
+      return;
+    }
     const len = Math.hypot(vx, vy);
     const esconder = (k.C.isDown || this.esconderSegurado) && len <= 0.01 && !this.trocando;
     if (esconder) {
@@ -214,6 +315,13 @@ export default class Teste extends Phaser.Scene {
       c.extraAte = agora + (a.frames.length * 1000) / a.fps + segurar;
     };
     // parado de lado/de costas por um tempo, vira pra câmera (como gente esperando) e aí pisca, olha, etc.
+    if (this.dialogo && this.dialogo.ativo) {
+      if (agora >= c.piscarEm && c.facing === "frente" && this.anim(c, "frente_piscar")) {
+        c.piscarEm = agora + Phaser.Math.Between(2200, 5200);
+        return tocar("frente_piscar", 50);
+      }
+      return;
+    }
     if (c.facing !== "frente" && agora >= c.virarEm) {
       c.facing = "frente";
       this.parar(c);
@@ -264,6 +372,7 @@ export default class Teste extends Phaser.Scene {
       const dy = w.y - c.s.y;
       if (Math.abs(dx) < 46 && dy > -26 && dy < 22) {
         w.balancando = true;
+        this.som("folhas", 0.14, Phaser.Math.FloatBetween(0.9, 1.15), 350);
         const lado = Math.sign(dx || nx || 1);
         this.tweens.chain({
           targets: w,
@@ -318,14 +427,15 @@ export default class Teste extends Phaser.Scene {
   criarHud() {
     const toque = this.sys.game.device.input.touch;
     const estilo = { fontFamily: "Trebuchet MS, Verdana, sans-serif", color: "#fff3d6", stroke: "#000000" };
+    this.hud = [];
     this.hudNome = this.add
       .text(48, 36, NOMES[this.chars[0].nome], { ...estilo, fontSize: "64px", strokeThickness: 9 })
       .setScrollFactor(0)
       .setDepth(UI);
     const dica = toque
-      ? "Arraste do lado esquerdo pra andar (até o fim = correr) · segure ESCONDER · TROCAR muda o personagem"
-      : "WASD/setas: andar · Shift: correr · C: esconder (segure) · Tab ou 1/2/3: trocar";
-    this.add.text(50, 118, dica, { ...estilo, fontSize: "38px", strokeThickness: 7 }).setScrollFactor(0).setDepth(UI);
+      ? "Arraste à esquerda pra andar (até o fim = correr) · FALAR perto de alguém · segure ESCONDER"
+      : "WASD/setas: andar · Shift: correr · E: falar · C: esconder · Tab/1/2/3: trocar";
+    this.hud.push(this.hudNome, this.add.text(50, 118, dica, { ...estilo, fontSize: "38px", strokeThickness: 7 }).setScrollFactor(0).setDepth(UI));
   }
 
   // raio do joystick em pixels do jogo equivalente a ~60 px de tela, seja celular ou tablet
@@ -374,11 +484,13 @@ export default class Teste extends Phaser.Scene {
     };
     botao(190, 210, 120, "CORRER", () => (this.correrSegurado = true), () => (this.correrSegurado = false));
     botao(430, 130, 84, "TROCAR", () => this.trocar((this.ativo + 1) % this.chars.length));
-    botao(420, 330, 84, "ESCONDER", () => (this.esconderSegurado = true), () => (this.esconderSegurado = false));
+    botao(430, 330, 84, "ESCONDER", () => (this.esconderSegurado = true), () => (this.esconderSegurado = false));
+    botao(660, 150, 84, "FALAR", () => (this.dialogo.ativo ? this.dialogo.avancar() : this.conversar()));
     this.posicionarBotoes();
     this.scale.on("resize", () => this.posicionarBotoes());
 
     this.input.on("pointerdown", (p, sobre) => {
+      if (this.dialogo && this.dialogo.ativo && !sobre.length) return this.dialogo.avancar();
       if (sobre.length || this.joy.ativo || p.x > this.scale.width * 0.55) return;
       Object.assign(this.joy, { ativo: true, id: p.id, bx: p.x, by: p.y, vx: 0, vy: 0, mag: 0 });
     });

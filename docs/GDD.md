@@ -69,6 +69,7 @@
 - **Câmera:** cutscenes no próprio jogo, com faixas pretas de cinema, aproximação lenta e enquadramento pensado. A escolha de fala aparece dentro da cena, com tempo nas escolhas tensas.
 - **Luz:** a lanterna é a única luz forte da noite, com sombra de verdade. A cor conta a história (tarde quente, noite fria).
 - **Som:** o medo vem do silêncio que para, não de barulho alto. Um tema musical que volta em momentos-chave. Sem susto barato.
+- **Voz:** ninguém fala gravado. O texto vai no bilhete e a voz é o som do bicho (cachorro late, gato mia), com o tom variando a cada fala. Créditos e licenças em `game/CREDITOS.md` (só CC0 ou CC BY).
 - **Atuação:** ninguém fica parado como estátua (piscar, olhar, gesto, rabo). Reação a tudo que acontece perto.
 - **Escrita:** nada de explicar o que a imagem já mostra. Cada fala carrega a personalidade de quem fala.
 - **Estrutura:** abertura forte, todo capítulo termina num gancho, fluxograma no fim.

@@ -283,3 +283,86 @@ Use esta imagem (folha de poses da Riley) como modelo EXATO de estilo, tamanho, 
 6) de frente, encolhendo de medo, abraçando o próprio corpo
 Regras: SÓ as duas orelhas grandes e pontudas de gato, iguais às dos outros quadros (nunca orelha redonda, nunca caída). Nada de celular. O "3" do peito legível. Olhos de pálpebra meio caída, iguais aos da folha. Fundo verde liso (#00FF00), sem xadrez, sem sombra, sem texto.
 ```
+
+---
+
+## Rodada 4 — andar de verdade (perna passando pela outra)
+
+O andar atual tem 3 quadros (passo, pernas juntas, outro passo): fica "troca de figura". Agora pedimos o ciclo
+completo de 8 quadros por direção. Anexar a folha de ANDAR do personagem (a primeira que o Gemini fez dele).
+
+### Chaz
+```
+Use a imagem (folha do Chaz azul) como modelo EXATO de estilo, tamanho, proporção e traço. Faça uma folha NOVA só com o Chaz ANDANDO, num ciclo de passada completo e suave, em 4 linhas de 8 quadros:
+Linha 1: andando de frente.
+Linha 2: andando virado pra esquerda.
+Linha 3: andando virado pra direita.
+Linha 4: andando de costas.
+Os 8 quadros de cada linha, nesta ordem:
+1) pé esquerdo encosta no chão, na frente
+2) o corpo desce um pouquinho, peso na perna esquerda
+3) a perna direita passa pela esquerda (pernas se cruzando)
+4) o corpo sobe, perna direita indo pra frente
+5) pé direito encosta no chão, na frente
+6) o corpo desce um pouquinho, peso na perna direita
+7) a perna esquerda passa pela direita (pernas se cruzando)
+8) o corpo sobe, perna esquerda indo pra frente
+Os braços balançam ao contrário das pernas e o rabo balança de leve. A cabeça, o rosto, os olhos (abertos) e o tamanho são IGUAIS em todos os quadros: só pernas, braços, rabo e a altura do corpo (sobe e desce 1 ou 2 pixels) mudam.
+Mesma cabeça grande, pernas curtas e contorno preto grosso da folha modelo. "3" do peito legível (nunca espelhado). Fundo verde liso (#00FF00), sem xadrez, sem sombra, sem texto.
+```
+
+### Riley
+```
+Use a imagem (folha de andar da Riley) como modelo EXATO de estilo, tamanho, proporção e traço. Faça uma folha NOVA só com Riley ANDANDO, num ciclo de passada completo e suave, em 4 linhas de 8 quadros:
+Linha 1: andando de frente.
+Linha 2: andando pra esquerda.
+Linha 3: andando pra direita.
+Linha 4: andando de costas.
+Os 8 quadros de cada linha, nesta ordem:
+1) pé esquerdo encosta no chão, na frente
+2) o corpo desce um pouquinho, peso na perna esquerda
+3) a perna direita passa pela esquerda (pernas se cruzando)
+4) o corpo sobe, perna direita indo pra frente
+5) pé direito encosta no chão, na frente
+6) o corpo desce um pouquinho, peso na perna direita
+7) a perna esquerda passa pela direita (pernas se cruzando)
+8) o corpo sobe, perna esquerda indo pra frente
+Os braços balançam ao contrário das pernas e o rabo comprido balança devagar. A cabeça, o rosto, os olhos (pálpebra meio caída) e o tamanho são IGUAIS em todos os quadros: só pernas, braços, rabo e a altura do corpo (sobe e desce 1 ou 2 pixels) mudam.
+SÓ as duas orelhas de gato pontudas (nunca orelha caída). Mesma cabeça grande, pernas curtas e contorno preto grosso da folha modelo. "3" do peito legível (nunca espelhado). Fundo verde liso (#00FF00), sem xadrez, sem sombra, sem texto.
+```
+
+### Névoa
+```
+Use a imagem (folha do Névoa) como modelo EXATO de estilo, tamanho, cor, proporção e traço. Faça uma folha NOVA só com o Névoa ANDANDO, num ciclo de passada completo e suave, em 4 linhas de 8 quadros:
+Linha 1: andando de frente.
+Linha 2: andando virado pra esquerda.
+Linha 3: andando virado pra direita.
+Linha 4: andando de costas.
+Os 8 quadros de cada linha, nesta ordem:
+1) pé esquerdo encosta no chão, na frente
+2) o corpo desce um pouquinho, peso na perna esquerda
+3) a perna direita passa pela esquerda (pernas se cruzando)
+4) o corpo sobe, perna direita indo pra frente
+5) pé direito encosta no chão, na frente
+6) o corpo desce um pouquinho, peso na perna direita
+7) a perna esquerda passa pela direita (pernas se cruzando)
+8) o corpo sobe, perna esquerda indo pra frente
+Andar meio arrastado, de quem está com sono; os braços balançam pouco e o rabo balança devagar. A cabeça, o rosto, os olhos (semicerrados) e o tamanho são IGUAIS em todos os quadros: só pernas, braços, rabo e a altura do corpo (sobe e desce 1 ou 2 pixels) mudam.
+Mesma cabeça grande, pernas curtas, cor chumbo e contorno preto grosso da folha modelo. Nuvem do peito igual (nunca espelhada). Fundo verde liso (#00FF00), sem xadrez, sem sombra, sem texto.
+```
+
+## Rodada 3d — Riley com a proporção certa
+
+A tentativa 3c acertou as poses, mas mudou o desenho (Riley alta e magra, cabeça pequena, traço fino).
+Anexar DUAS imagens: a folha de andar da Riley (proporção certa) e a tentativa 3c (poses certas).
+
+```
+A PRIMEIRA imagem (folha de andar da Riley) é o modelo EXATO de tamanho, proporção e traço: cabeça grande (quase metade da altura), corpo e pernas curtos, contorno preto grosso, pixels grandes. A SEGUNDA imagem tem as poses que eu quero, mas com a proporção errada (alta e magra demais, cabeça pequena, traço fino). Refaça as 6 poses da segunda imagem, numa linha de 6 quadros, com a proporção e o traço da PRIMEIRA:
+1) de frente, braços cruzados, cara de tédio
+2) de frente, braços cruzados, batendo o pé no chão (sem risquinhos de movimento)
+3) de frente, braços cruzados, revirando os olhos
+4) de frente, agachando pra se esconder
+5) de frente, agachando e tapando a boca com a mão
+6) de frente, encolhendo de medo, abraçando o próprio corpo
+SÓ as duas orelhas de gato pontudas. O "3" do peito legível. Fundo verde liso (#00FF00), sem xadrez, sem sombra, sem texto.
+```
