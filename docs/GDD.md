@@ -13,7 +13,7 @@
 | Referência de jogabilidade | O *jeito de jogar* de **Detroit: Become Human** (escolhas que ramificam, morte permanente, fluxograma de capítulo) e **House 2** (o mundo reage ao que você faz). Nenhum conteúdo, personagem ou trama desses jogos. |
 | Primeira versão | **Capítulo 1**, 10–15 min, **3 finais**. |
 | Plataforma | HTML5 + JavaScript (Phaser 3), Android via Capacitor. Controle por toque **e** teclado. |
-| Arte | Estilo da folha do Chaz feita no Gemini (v2), **aprovado pelo diretor**: pixel art chibi, cor chapada, contorno preto grosso. As folhas vêm do Gemini (prompts em `docs/PROMPTS_GEMINI.md`) e são restauradas pro grid real por script (`tools/restore_gemini.py`), sem borrar; olhos e marca do peito redesenhados à mão. **Proibido** conversor de desenho→pixel (o que borra). Quadro 96×96, paleta curta por personagem. Volume e sombra vêm da iluminação do jogo, não do sprite. |
+| Arte | Estilo da folha do Chaz feita no Gemini (v2), **aprovado pelo diretor**: pixel art chibi, cor chapada, contorno preto grosso. As folhas vêm do Gemini (prompts em `docs/PROMPTS_GEMINI.md`) e entram no jogo **como vieram**: o script (`pixel-art/build_sprites.py`) só tira o fundo, recorta e alinha. Nada é redesenhado; o que sair errado volta pro Gemini. **Proibido** conversor de desenho→pixel (o que borra). Quadro 184×192 (resolução original da folha). Volume e sombra vêm da iluminação do jogo, não do sprite. |
 
 ## 2. Pilares
 
@@ -70,7 +70,7 @@ Todo esse conteúdo está a serviço da história.
 
 ## 6. Produção — ordem de trabalho
 
-1. **Sprites** (96×96, Gemini → restauração): Chaz (feito, falta correr de costas) → Riley → Névoa. Depois, extras de terror (agachar/esconder, susto, medo). Cada passo revisado com o diretor antes do próximo.
+1. **Sprites** (Gemini, cópia fiel): Chaz, Riley e Névoa no jogo. Consertos pendentes: orelha da Riley no correr de perfil, linha de costas do Chaz. Depois, extras de terror (agachar/esconder, susto, medo). Cada passo revisado com o diretor antes do próximo.
 2. **Protótipo jogável**: Vite + Phaser 3, joystick virtual + botão de ação, teclado (WASD/setas + E/Espaço), escuridão + lanterna, esconderijo. Testado com Playwright (screenshot e gravação).
 3. **Cenários** do Cap. 1 (trigal ao pôr do sol, trigal à noite, casa da fazenda).
 4. **Conteúdo**: diálogos, escolhas, flags, 3 finais, fluxograma.

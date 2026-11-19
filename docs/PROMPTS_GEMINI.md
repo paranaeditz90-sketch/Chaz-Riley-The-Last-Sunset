@@ -76,3 +76,23 @@ Anexar só a folha v2 do Chaz.
 ```
 Use esta imagem (folha do Chaz azul) como modelo EXATO. Faça só UMA linha com 4 quadros do Chaz DE COSTAS: parado, e correndo em 3 quadros (perna esquerda esticada à frente, corpo no ar, perna direita esticada à frente). Mesmo estilo, mesmo tamanho e mesmo espaçamento da folha. Rabo de cachorro peludo e comprido, balançando de lado (não uma bolinha de coelho). Fundo verde liso (#00FF00). Sem xadrez, sem sombra, sem texto.
 ```
+
+---
+
+## Consertos (rodada 2)
+
+### Riley — orelha a mais no correr de perfil
+Nos 6 quadros de correr de perfil o Gemini colocou uma orelha caída de cachorro além das pontudas.
+Anexar a folha da Riley.
+
+```
+Use esta imagem (folha da Riley) como modelo EXATO. Nas linhas 2 e 3 (Riley de perfil), os 3 quadros de CORRER ganharam uma orelha caída de cachorro além das orelhas de gata. Refaça só esses 6 quadros, em 2 linhas de 3: correndo virada pra esquerda (3) e correndo virada pra direita (3), com SÓ as duas orelhas de gata pontudas, iguais às dos quadros de andar. Mesmo estilo, tamanho, olhos e espaçamento. Fundo verde liso (#00FF00), sem xadrez, sem texto.
+```
+
+### Chaz — linha de costas inteira (opcional)
+O correr de costas veio com a cabeça menor e mais redonda que a do andar de costas da folha v2.
+Uma linha só, gerada de uma vez, fica igual entre si. Anexar a folha v2 do Chaz.
+
+```
+Use esta imagem (folha do Chaz azul) como modelo EXATO. Faça só UMA linha com 7 quadros do Chaz DE COSTAS, todos com a mesma cabeça larga e as orelhas caídas dos lados, iguais à linha de costas da folha: parado, andando (3 quadros) e correndo (3 quadros: perna esquerda esticada à frente, corpo no ar, perna direita esticada à frente). Rabo de cachorro peludo, balançando de lado. Mesmo tamanho e espaçamento. Fundo verde liso (#00FF00), sem xadrez, sem sombra, sem texto.
+```

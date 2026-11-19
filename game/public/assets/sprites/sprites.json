@@ -1,0 +1,386 @@
+{
+ "frameWidth": 184,
+ "frameHeight": 192,
+ "originY": 0.9791666666666666,
+ "characters": {
+  "chaz": {
+   "image": "assets/sprites/chaz.png",
+   "rows": [
+    "frente",
+    "esquerda",
+    "direita",
+    "costas",
+    "extras"
+   ],
+   "anims": {
+    "frente_parado": {
+     "frames": [
+      0
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "frente_andar": {
+     "frames": [
+      1,
+      2,
+      3,
+      2
+     ],
+     "fps": 6.67,
+     "repeat": -1
+    },
+    "frente_correr": {
+     "frames": [
+      4,
+      5,
+      6,
+      5
+     ],
+     "fps": 10,
+     "repeat": -1
+    },
+    "esquerda_parado": {
+     "frames": [
+      7
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "esquerda_andar": {
+     "frames": [
+      8,
+      9,
+      10,
+      9
+     ],
+     "fps": 6.67,
+     "repeat": -1
+    },
+    "esquerda_correr": {
+     "frames": [
+      11,
+      12,
+      13,
+      12
+     ],
+     "fps": 10,
+     "repeat": -1
+    },
+    "direita_parado": {
+     "frames": [
+      14
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "direita_andar": {
+     "frames": [
+      15,
+      16,
+      17,
+      16
+     ],
+     "fps": 6.67,
+     "repeat": -1
+    },
+    "direita_correr": {
+     "frames": [
+      18,
+      19,
+      20,
+      19
+     ],
+     "fps": 10,
+     "repeat": -1
+    },
+    "costas_parado": {
+     "frames": [
+      21
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "costas_andar": {
+     "frames": [
+      22,
+      23,
+      24,
+      23
+     ],
+     "fps": 6.67,
+     "repeat": -1
+    },
+    "costas_correr": {
+     "frames": [
+      25,
+      26,
+      27,
+      26
+     ],
+     "fps": 10,
+     "repeat": -1
+    },
+    "comemorar": {
+     "frames": [
+      28
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "extra_braços": {
+     "frames": [
+      29
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "extra_passo": {
+     "frames": [
+      30
+     ],
+     "fps": 1,
+     "repeat": 0
+    }
+   }
+  },
+  "riley": {
+   "image": "assets/sprites/riley.png",
+   "rows": [
+    "frente",
+    "esquerda",
+    "direita",
+    "costas"
+   ],
+   "anims": {
+    "frente_parado": {
+     "frames": [
+      0
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "frente_andar": {
+     "frames": [
+      1,
+      2,
+      3,
+      2
+     ],
+     "fps": 6.67,
+     "repeat": -1
+    },
+    "frente_correr": {
+     "frames": [
+      4,
+      5,
+      6,
+      5
+     ],
+     "fps": 10,
+     "repeat": -1
+    },
+    "esquerda_parado": {
+     "frames": [
+      7
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "esquerda_andar": {
+     "frames": [
+      8,
+      9,
+      10,
+      9
+     ],
+     "fps": 6.67,
+     "repeat": -1
+    },
+    "esquerda_correr": {
+     "frames": [
+      11,
+      12,
+      13,
+      12
+     ],
+     "fps": 10,
+     "repeat": -1
+    },
+    "direita_parado": {
+     "frames": [
+      14
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "direita_andar": {
+     "frames": [
+      15,
+      16,
+      17,
+      16
+     ],
+     "fps": 6.67,
+     "repeat": -1
+    },
+    "direita_correr": {
+     "frames": [
+      18,
+      19,
+      20,
+      19
+     ],
+     "fps": 10,
+     "repeat": -1
+    },
+    "costas_parado": {
+     "frames": [
+      21
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "costas_andar": {
+     "frames": [
+      22,
+      23,
+      24,
+      23
+     ],
+     "fps": 6.67,
+     "repeat": -1
+    },
+    "costas_correr": {
+     "frames": [
+      25,
+      26,
+      27,
+      26
+     ],
+     "fps": 10,
+     "repeat": -1
+    }
+   }
+  },
+  "nevoa": {
+   "image": "assets/sprites/nevoa.png",
+   "rows": [
+    "frente",
+    "esquerda",
+    "direita",
+    "costas"
+   ],
+   "anims": {
+    "frente_parado": {
+     "frames": [
+      0
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "frente_andar": {
+     "frames": [
+      1,
+      2,
+      3,
+      2
+     ],
+     "fps": 6.67,
+     "repeat": -1
+    },
+    "frente_correr": {
+     "frames": [
+      4,
+      5,
+      6,
+      5
+     ],
+     "fps": 10,
+     "repeat": -1
+    },
+    "esquerda_parado": {
+     "frames": [
+      7
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "esquerda_andar": {
+     "frames": [
+      8,
+      9,
+      10,
+      9
+     ],
+     "fps": 6.67,
+     "repeat": -1
+    },
+    "esquerda_correr": {
+     "frames": [
+      11,
+      12,
+      13,
+      12
+     ],
+     "fps": 10,
+     "repeat": -1
+    },
+    "direita_parado": {
+     "frames": [
+      14
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "direita_andar": {
+     "frames": [
+      15,
+      16,
+      17,
+      16
+     ],
+     "fps": 6.67,
+     "repeat": -1
+    },
+    "direita_correr": {
+     "frames": [
+      18,
+      19,
+      20,
+      19
+     ],
+     "fps": 10,
+     "repeat": -1
+    },
+    "costas_parado": {
+     "frames": [
+      21
+     ],
+     "fps": 1,
+     "repeat": 0
+    },
+    "costas_andar": {
+     "frames": [
+      22,
+      23,
+      24,
+      23
+     ],
+     "fps": 6.67,
+     "repeat": -1
+    },
+    "costas_correr": {
+     "frames": [
+      25,
+      26,
+      27,
+      26
+     ],
+     "fps": 10,
+     "repeat": -1
+    }
+   }
+  }
+ }
+}
