@@ -10,11 +10,30 @@
     #girar { display: none; position: fixed; inset: 0; z-index: 9; align-items: center; justify-content: center;
              background: #0d0b10; color: #fff3d6; font: 600 22px "Trebuchet MS", Verdana, sans-serif; text-align: center; padding: 16px; }
     @media (orientation: portrait) and (pointer: coarse) { #girar { display: flex; } }
+    #iniciar { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center;
+               gap: 8px; border: 0; background: rgba(13, 11, 16, 0.82); color: #fff3d6; font: 700 28px "Trebuchet MS", Verdana, sans-serif; cursor: pointer; }
+    #iniciar small { font-size: 16px; font-weight: 400; opacity: 0.75; }
+    #iniciar[hidden] { display: none; }
   </style>
 </head>
 <body>
   <div id="game"></div>
   <div id="girar">Vire o celular na horizontal ↻</div>
+  <button id="iniciar" type="button">Toque pra jogar<small>tela cheia</small></button>
+  <script>
+    // tela cheia e trava na horizontal (Android/Chrome). Se o aparelho não deixar, o jogo roda assim mesmo.
+    (() => {
+      const bt = document.getElementById("iniciar");
+      bt.addEventListener("click", async () => {
+        bt.hidden = true;
+        try { await document.documentElement.requestFullscreen({ navigationUI: "hide" }); } catch (e) {}
+        try { await screen.orientation.lock("landscape"); } catch (e) {}
+      });
+      document.addEventListener("fullscreenchange", () => {
+        if (!document.fullscreenElement && matchMedia("(pointer: coarse)").matches) bt.hidden = false;
+      });
+    })();
+  </script>
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>

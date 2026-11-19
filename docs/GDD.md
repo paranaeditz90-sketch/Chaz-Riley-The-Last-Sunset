@@ -46,6 +46,7 @@
 - Escolhas de **ação** no mundo: fechar uma porta, ligar ou não uma luz, ir ou ficar.
 - Flags persistentes: confiança entre cada par de personagens, segredos contados ou guardados, quem está vivo ou desaparecido, e outras métricas internas que não são mostradas.
 - **Fluxograma de fim de capítulo** com os ramos descobertos e os bloqueados (incentiva rejogar).
+- **Cutscenes com escolha de fala** (ideia do diretor, a detalhar): cenas no próprio motor do jogo (sprites, câmera, caixa de diálogo com retrato), sem vídeo pré-gravado.
 
 ### Troca de personagem
 - Ocorre em pontos de história e quando alguém morre ou desaparece.
@@ -70,7 +71,7 @@ Todo esse conteúdo está a serviço da história.
 
 ## 6. Produção — ordem de trabalho
 
-1. **Sprites** (Gemini, cópia fiel): Chaz, Riley e Névoa no jogo. Consertos pendentes: orelha da Riley no correr de perfil, linha de costas do Chaz. Depois, extras de terror (agachar/esconder, susto, medo). Cada passo revisado com o diretor antes do próximo.
+1. **Sprites** (Gemini, cópia fiel): Chaz, Riley e Névoa no jogo. Consertos feitos: orelha da Riley no correr de perfil (cabeça do andar), linha de costas do Chaz (nova do Gemini). Depois, extras de terror (agachar/esconder, susto, medo). Cada passo revisado com o diretor antes do próximo.
 2. **Protótipo jogável**: Vite + Phaser 3, joystick virtual + botão de ação, teclado (WASD/setas + E/Espaço), escuridão + lanterna, esconderijo. Testado com Playwright (screenshot e gravação).
 3. **Cenários** do Cap. 1 (trigal ao pôr do sol, trigal à noite, casa da fazenda).
 4. **Conteúdo**: diálogos, escolhas, flags, 3 finais, fluxograma.

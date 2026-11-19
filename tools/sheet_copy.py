@@ -181,3 +181,82 @@ def place(fr, cell_w, cell_h, ground, cx):
     m = fr[..., 3] > 0
     region[m] = fr[m]
     return out
+
+
+# ------------------------------------------------------------------ conserto autorizado pelo diretor
+def _olho(f):
+    """Centro do branco do olho (creme no alto da cabeça; o "3" fica mais embaixo)."""
+    c = f[..., :3].astype(int)
+    p = (f[..., 3] > 0) & (c[..., 0] > 200) & (c[..., 1] > 170)
+    p[int(f.shape[0] * 0.55):] = False
+    ys, xs = np.nonzero(p)
+    return xs.mean(), ys.mean()
+
+
+def trocar_cabeca(run, walk, abaixo_do_olho=20):
+    """Riley de perfil correndo: o Gemini pôs uma orelha caída de cachorro a mais.
+    Troca a cabeça pela do quadro de andar da mesma direção (pixels do próprio Gemini), alinhada pelo olho.
+    Na emenda, liga nuca e costas em linha reta e refaz o contorno só onde abriu borda nova."""
+    from scipy.ndimage import distance_transform_edt
+
+    ex_r, ey_r = _olho(run)
+    ex_w, ey_w = _olho(walk)
+    dx, dy = int(round(ex_r - ex_w)), int(round(ey_r - ey_w))
+    cut = int(round(ey_r)) + abaixo_do_olho
+    H, W = run.shape[:2]
+    pad = 40
+    out = np.zeros((H + pad, W + 2 * pad, 4), np.uint8)
+    out[pad:pad + H, pad:pad + W] = run
+    out[:pad + cut, :, 3] = 0                                   # some a cabeça antiga (com a orelha extra)
+    m = (walk[..., 3] > 0) & ((np.arange(walk.shape[0])[:, None] + dy) < cut)
+    ys, xs = np.nonzero(m)
+    out[ys + dy + pad, xs + dx + pad] = walk[ys, xs]           # cabeça do quadro de andar
+
+    costas_dir = ex_r < W / 2                                   # olho à esquerda = costas à direita
+    cc = out[..., :3].astype(int)
+    tres = (out[..., 3] > 0) & (cc[..., 0] > 200) & (cc[..., 1] > 170)
+    tres[:pad + int(H * 0.55)] = False
+    xc = int(np.nonzero(tres)[1].mean())                        # centro do corpo = centro do "3"
+    passo = 1 if costas_dir else -1
+
+    def borda(y):                                               # fim do corpo nessa linha (rabo separado não conta)
+        x = xc
+        while 0 <= x + passo < out.shape[1] and out[y, x + passo, 3] > 0:
+            x += passo
+        return x
+
+    y0, y1 = pad + cut - 6, pad + cut + 8
+    e0, e1 = borda(y0), borda(y1)
+    if abs(e1 - e0) > 25:
+        e1 = e0
+    corpo = (run[..., 3] > 0) & (run[..., 0].astype(int) > run[..., 1].astype(int) + 40)
+    cor = np.median(run[corpo][:, :3], 0).astype(np.uint8)
+    for y in range(y0, y1 + 1):
+        e = int(round(e0 + (e1 - e0) * (y - y0) / (y1 - y0)))
+        row, s1 = out[y], borda(y)
+        if costas_dir:
+            if e < s1:
+                row[e + 1:s1 + 1, 3] = 0
+            else:
+                for x in range(s1 + 1, e + 1):
+                    if row[x, 3]:
+                        break
+                    row[x, :3], row[x, 3] = cor, 255
+        else:
+            if e > s1:
+                row[s1:e, 3] = 0
+            else:
+                for x in range(s1 - 1, e - 1, -1):
+                    if row[x, 3]:
+                        break
+                    row[x, :3], row[x, 3] = cor, 255
+
+    op = out[..., 3] > 0
+    dist = distance_transform_edt(op)
+    zona = np.zeros_like(op)
+    zona[pad + cut - 8:pad + cut + 12] = True
+    c = out[..., :3].astype(int)
+    pele = op & (c.max(-1) >= 70) & (c[..., 0] > c[..., 1] + 40) & (c[..., 0] < 200)
+    out[zona & pele & (dist <= 3), :3] = (5, 2, 1)
+    ys, xs = np.nonzero(out[..., 3] > 0)
+    return out[ys.min():ys.max() + 1, xs.min():xs.max() + 1]

@@ -2,8 +2,9 @@
 
 Fontes (pixel-art/<nome>/fonte/):
   chaz:  chaz_gemini_v2.jpg (fundo xadrez, 4x7: frente, esquerda, direita, costas parado+andar + 3 extras)
-         chaz_costas_correr_gemini.jpg (fundo verde, 1x4: costas parado + correr x3; escala maior, ajustada)
-  riley: riley_gemini.jpg (fundo verde, 4x7)
+         chaz_costas_linha_gemini.jpg (fundo verde, 1x7: costas completo; escala maior, ajustada)
+  riley: riley_gemini.jpg (fundo verde, 4x7). Correr de perfil: cabeça trocada pela do andar (orelha extra
+         do Gemini; conserto autorizado pelo diretor, ver tools/sheet_copy.py: trocar_cabeca)
   nevoa: nevoa_gemini.jpg (fundo verde, 4x7)
 
 Saída por personagem: pixel-art/<nome>/<nome>_folha.png + preview + GIFs,
@@ -20,7 +21,7 @@ from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
-from sheet_copy import color_match, despeckle, grid, head_cx, key_checker, key_green, load, place  # noqa: E402
+from sheet_copy import color_match, despeckle, grid, head_cx, key_checker, key_green, load, place, trocar_cabeca  # noqa: E402
 
 PA = os.path.join(ROOT, "pixel-art")
 GAME = os.path.join(ROOT, "game", "public", "assets", "sprites")
@@ -37,18 +38,19 @@ def sheet(path, kind, nrows, ncols, scale=1.0):
 def chaz():
     src = os.path.join(PA, "chaz", "fonte")
     v2 = sheet(os.path.join(src, "chaz_gemini_v2.jpg"), "checker", 4, 7)
-    # folha avulsa do correr de costas: mesma altura do "costas parado" da v2 e mesma cor
-    raw = sheet(os.path.join(src, "chaz_costas_correr_gemini.jpg"), "green", 1, 4)
+    # linha de costas avulsa (7 quadros de uma vez): mesma altura do "costas parado" da v2 e mesma cor
+    linha = os.path.join(src, "chaz_costas_linha_gemini.jpg")
+    raw = sheet(linha, "green", 1, 7)
     s = v2[(3, 0)].shape[0] / raw[(0, 0)].shape[0]
-    run = sheet(os.path.join(src, "chaz_costas_correr_gemini.jpg"), "green", 1, 4, scale=s)
-    run = {k: color_match(v, [((1, 1, 2), (1, 1, 6)), ((14, 44, 231), (26, 51, 223))]) for k, v in run.items()}
+    costas = sheet(linha, "green", 1, 7, scale=s)
+    costas = {k: color_match(v, [((1, 1, 2), (1, 1, 6)), ((24, 51, 217), (26, 52, 225))]) for k, v in costas.items()}
     rows = {}
     for r, d in enumerate(DIRS[:3]):
         rows[d] = [v2[(r, c)] for c in range(7)]
-    rows["costas"] = [v2[(3, c)] for c in range(4)] + [run[(0, c)] for c in (1, 2, 3)]
+    rows["costas"] = [costas[(0, c)] for c in range(7)]
     rows["extras"] = [v2[(3, 4)], v2[(3, 5)], v2[(3, 6)]]
     extras = {"comemorar": [0], "extra_braços": [1], "extra_passo": [2]}
-    return rows, extras, f"correr de costas: folha avulsa reduzida {s:.3f}x"
+    return rows, extras, f"costas: linha avulsa reduzida {s:.3f}x"
 
 
 def simple(nome):
@@ -56,7 +58,15 @@ def simple(nome):
     return {d: [fr[(r, c)] for c in range(7)] for r, d in enumerate(DIRS)}, {}, ""
 
 
-chars = {"chaz": chaz(), "riley": simple("riley"), "nevoa": simple("nevoa")}
+def riley():
+    rows, extras, _ = simple("riley")
+    for d in ("esquerda", "direita"):
+        for c, w in ((4, 1), (5, 2), (6, 3)):
+            rows[d][c] = trocar_cabeca(rows[d][c], rows[d][w])
+    return rows, extras, "correr de perfil: cabeça do andar (orelha extra removida)"
+
+
+chars = {"chaz": chaz(), "riley": riley(), "nevoa": simple("nevoa")}
 
 # célula comum: cabe o maior quadro dos três com a cabeça no centro
 left = max(head_cx(f) for rows, _, _ in chars.values() for fs in rows.values() for f in fs)

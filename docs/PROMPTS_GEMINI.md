@@ -81,15 +81,16 @@ Use esta imagem (folha do Chaz azul) como modelo EXATO. Faça só UMA linha com 
 
 ## Consertos (rodada 2)
 
-### Riley — orelha a mais no correr de perfil
-Nos 6 quadros de correr de perfil o Gemini colocou uma orelha caída de cachorro além das pontudas.
-Anexar a folha da Riley.
+### Riley — orelha a mais no correr de perfil (RESOLVIDO sem Gemini)
+O Gemini repetiu o erro. Resolvido no script: a cabeça dos quadros de andar (pixels do Gemini) foi colada
+nos 6 quadros de correr (`trocar_cabeca` em `tools/sheet_copy.py`), com autorização do diretor.
+Prompt usado (não funcionou):
 
 ```
 Use esta imagem (folha da Riley) como modelo EXATO. Nas linhas 2 e 3 (Riley de perfil), os 3 quadros de CORRER ganharam uma orelha caída de cachorro além das orelhas de gata. Refaça só esses 6 quadros, em 2 linhas de 3: correndo virada pra esquerda (3) e correndo virada pra direita (3), com SÓ as duas orelhas de gata pontudas, iguais às dos quadros de andar. Mesmo estilo, tamanho, olhos e espaçamento. Fundo verde liso (#00FF00), sem xadrez, sem texto.
 ```
 
-### Chaz — linha de costas inteira (opcional)
+### Chaz — linha de costas inteira (FEITO: `chaz_costas_linha_gemini.jpg`)
 O correr de costas veio com a cabeça menor e mais redonda que a do andar de costas da folha v2.
 Uma linha só, gerada de uma vez, fica igual entre si. Anexar a folha v2 do Chaz.
 

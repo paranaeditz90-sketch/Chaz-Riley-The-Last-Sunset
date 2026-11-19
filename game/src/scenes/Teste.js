@@ -4,8 +4,9 @@ import Phaser from "phaser";
 // Cenário provisório (chão e trigo de mentira). Lanterna, luz e sombra entram na próxima etapa.
 
 const NOMES = { chaz: "Chaz", riley: "Riley", nevoa: "Névoa" };
-const MUNDO_W = 3600;
-const MUNDO_H = 2400;
+// mundo maior que qualquer tela: com a largura acompanhando a tela (EXPAND), 3600 sobrava faixa preta em tela muito larga
+const MUNDO_W = 6400;
+const MUNDO_H = 3200;
 const VEL_ANDAR = 230;
 const VEL_CORRER = 470;
 const CAM_OFFSET_Y = 80; // câmera mira no corpo, não no pé
@@ -17,6 +18,15 @@ export default class Teste extends Phaser.Scene {
   }
 
   preload() {
+    // versão arquivo único (HTML): sprites e JSON já vêm embutidos na página, sem buscar arquivo nenhum
+    const emb = window.__SPRITES__;
+    if (emb) {
+      this.cache.json.add("sprites", emb.meta);
+      for (const nome of Object.keys(emb.meta.characters)) {
+        this.load.spritesheet(nome, emb.images[nome], { frameWidth: emb.meta.frameWidth, frameHeight: emb.meta.frameHeight });
+      }
+      return;
+    }
     this.load.json("sprites", "assets/sprites/sprites.json");
     this.load.once("filecomplete-json-sprites", (_key, _type, data) => {
       for (const [nome, c] of Object.entries(data.characters)) {
@@ -40,7 +50,7 @@ export default class Teste extends Phaser.Scene {
       }
     }
 
-    const inicio = { riley: [1560, 1250], chaz: [1800, 1200], nevoa: [2040, 1260] };
+    const inicio = { riley: [2960, 1650], chaz: [3200, 1600], nevoa: [3440, 1660] };
     this.chars = ["chaz", "riley", "nevoa"].map((nome) => {
       const [x, y] = inicio[nome];
       const s = this.add.sprite(x, y, nome).setOrigin(0.5, this.meta.originY);
@@ -162,8 +172,8 @@ export default class Teste extends Phaser.Scene {
     g.destroy();
 
     this.add.tileSprite(0, 0, MUNDO_W, MUNDO_H, "chao").setOrigin(0).setDepth(-1e6);
-    const livre = [[1560, 1250], [1800, 1200], [2040, 1260]];
-    for (let i = 0; i < 240; i++) {
+    const livre = [[2960, 1650], [3200, 1600], [3440, 1660]];
+    for (let i = 0; i < 760; i++) {
       const x = rnd.between(40, MUNDO_W - 40);
       const y = rnd.between(120, MUNDO_H - 10);
       if (livre.some(([lx, ly]) => Math.hypot(lx - x, ly - y) < 320)) continue;
