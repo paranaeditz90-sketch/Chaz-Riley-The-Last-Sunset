@@ -366,3 +366,22 @@ A PRIMEIRA imagem (folha de andar da Riley) é o modelo EXATO de tamanho, propor
 6) de frente, encolhendo de medo, abraçando o próprio corpo
 SÓ as duas orelhas de gato pontudas. O "3" do peito legível. Fundo verde liso (#00FF00), sem xadrez, sem sombra, sem texto.
 ```
+
+---
+
+## ChatGPT — usar a imagem de referência limpa
+
+O ChatGPT "redesenha" quando recebe a folha inteira (o rabo balançando do Chaz veio mais magro, cabeça estreita,
+olho creme, brilho e sorriso). Por isso cada personagem tem uma referência limpa, só o parado nas 4 direções,
+ampliado: `pixel-art/<nome>/referencia_parado.png`. Anexar ESSA imagem.
+
+### Chaz — rabo balançando parado
+```
+A imagem anexada é o Chaz parado em 4 direções (frente, virado pra esquerda, virado pra direita, costas). COPIE cada um IDÊNTICO, pixel por pixel: mesma cabeça larga, mesmo corpo gordinho, mesmo olho branco com íris roxa, mesmo contorno preto grosso, mesmo tamanho. NÃO redesenhe, NÃO afine, NÃO adicione brilho, sorriso nem detalhe.
+Mude SÓ o rabo. Faça uma folha de 4 linhas × 3 quadros:
+Linha 1: o Chaz de frente (o 1º da imagem), com o rabo pra um lado / no meio / pro outro lado.
+Linha 2: o Chaz virado pra esquerda (o 2º da imagem), rabo pra cima / no meio / pra baixo.
+Linha 3: o Chaz virado pra direita (o 3º da imagem), rabo pra cima / no meio / pra baixo.
+Linha 4: o Chaz de costas (o 4º da imagem), rabo pra esquerda / no meio / pra direita.
+Rabo de cachorro peludo, igual ao da imagem. Fundo verde liso (#00FF00), sem sombra, sem texto.
+```
