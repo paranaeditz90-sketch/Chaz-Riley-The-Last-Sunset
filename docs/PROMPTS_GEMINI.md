@@ -228,3 +228,58 @@ Linha 4:
 
 Fundo verde liso (#00FF00). Sem xadrez, sem sombra no chão, sem texto, sem números e sem molduras.
 ```
+
+---
+
+## Rodada 3b — rabo balançando parado (ideia do diretor)
+
+Folha pequena: 4 linhas (frente, esquerda, direita, costas) × 3 quadros (rabo pra um lado, meio, outro lado).
+No jogo vira o "respirar" do parado: o rabo vai e volta, e a piscada acontece por cima.
+
+### Chaz (anexar a folha v2 do Chaz)
+```
+Use a imagem (folha do Chaz azul) como modelo EXATO de estilo, tamanho e traço. Faça uma folha pequena com o Chaz PARADO balançando o rabo, em 4 linhas de 3 quadros (rabo pra um lado, rabo no meio, rabo pro outro lado):
+Linha 1: de frente.
+Linha 2: virado pra esquerda.
+Linha 3: virado pra direita.
+Linha 4: de costas.
+Só o rabo se mexe: corpo, cabeça e olhos iguais ao quadro "parado" da folha modelo. Rabo de cachorro peludo, balançando alegre. "3" do peito legível, olhos abertos. Mesmo tamanho e espaçamento da folha modelo. Fundo verde liso (#00FF00), sem xadrez, sem sombra, sem texto.
+```
+
+### Riley (anexar a folha da Riley)
+```
+Use a imagem (folha da Riley) como modelo EXATO de estilo, tamanho e traço. Faça uma folha pequena com a Riley PARADA balançando o rabo, em 4 linhas de 3 quadros (rabo pra um lado, rabo no meio, rabo pro outro lado):
+Linha 1: de frente.
+Linha 2: virada pra esquerda.
+Linha 3: virada pra direita.
+Linha 4: de costas.
+Só o rabo se mexe: corpo, cabeça e olhos iguais ao quadro "parado" da folha modelo. Rabo de gata comprido, balançando devagar, meio impaciente. Só as duas orelhas de gata pontudas, "3" do peito legível. Mesmo tamanho e espaçamento da folha modelo. Fundo verde liso (#00FF00), sem xadrez, sem sombra, sem texto.
+```
+
+### Névoa (anexar a folha do Névoa)
+```
+Use a imagem (folha do Névoa) como modelo EXATO de estilo, tamanho, cor e traço. Faça uma folha pequena com o Névoa PARADO balançando o rabo, em 4 linhas de 3 quadros (rabo pra um lado, rabo no meio, rabo pro outro lado):
+Linha 1: de frente.
+Linha 2: virado pra esquerda.
+Linha 3: virado pra direita.
+Linha 4: de costas.
+Só o rabo se mexe: corpo, cabeça e olhos iguais ao quadro "parado" da folha modelo. Rabo peludo balançando devagar, preguiçoso. Nuvem do peito igual, olhos semicerrados. Mesmo tamanho e espaçamento da folha modelo. Fundo verde liso (#00FF00), sem xadrez, sem sombra, sem texto.
+```
+
+---
+
+## Rodada 3c — conserto das poses da Riley
+
+Na folha de poses da Riley, o Gemini deu os gestos do Chaz (celular) e orelha redonda em 3 poses de frente.
+Texto sem gênero (Riley não tem gênero marcado no jogo). Anexar a folha de poses da Riley que ele acabou de fazer.
+
+```
+Use esta imagem (folha de poses da Riley) como modelo EXATO de estilo, tamanho, cor e traço. Refaça SÓ estas 6 poses, numa linha de 6 quadros com o mesmo espaçamento:
+1) de frente, cruzando os braços, cara de tédio
+2) de frente, braços cruzados, batendo o pé no chão
+3) de frente, braços cruzados, revirando os olhos
+4) de frente, agachando pra se esconder
+5) de frente, agachando e tapando a boca com a mão
+6) de frente, encolhendo de medo, abraçando o próprio corpo
+Regras: SÓ as duas orelhas grandes e pontudas de gato, iguais às dos outros quadros (nunca orelha redonda, nunca caída). Nada de celular. O "3" do peito legível. Olhos de pálpebra meio caída, iguais aos da folha. Fundo verde liso (#00FF00), sem xadrez, sem sombra, sem texto.
+```

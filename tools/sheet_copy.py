@@ -297,16 +297,59 @@ def trocar_rosto(alvo, fonte, cor_corpo):
     _, dx, dy = best
     out = alvo.copy()
     cor = np.array(cor_corpo, np.uint8)
-    for y in range(y0, y1 + 1):
-        for x in range(x0, x1 + 1):
-            ty, tx = y + dy, x + dx
+    # área trocada = olhos da fonte (já no lugar do alvo) UNIÃO olhos do alvo: não sobra branco do olho velho
+    c2 = alvo[..., :3].astype(int)
+    olho_alvo = (alvo[..., 3] > 0) & (((c2.min(-1) > 190)) | ((c2[..., 2] > 150) & (c2[..., 0] > 100) & (c2[..., 1] < 130)))
+    olho_alvo[int(alvo.shape[0] * 0.5):] = False
+    ty0, ty1, tx0, tx1 = y0 + dy, y1 + dy, x0 + dx, x1 + dx
+    if olho_alvo.sum() >= 20:
+        ays, axs = np.nonzero(olho_alvo)
+        ty0, ty1 = min(ty0, ays.min() - 6), max(ty1, ays.max() + 13)
+        tx0, tx1 = min(tx0, axs.min() - 3), max(tx1, axs.max() + 3)
+    # branco do olho com a cor do alvo (a folha nova às vezes vem creme) e brilho solto fora do olho vira corpo
+    from scipy.ndimage import binary_dilation
+    branco_alvo = None
+    if olho_alvo.sum() >= 20:
+        bw = alvo[olho_alvo & (c2.min(-1) > 190)][:, :3]
+        if len(bw):
+            branco_alvo = np.median(bw, 0).astype(np.uint8)
+    cf = fonte[..., :3].astype(int)
+    olho_f = (fonte[..., 3] > 0) & (((cf.min(-1) > 170)) | ((cf[..., 2] > 150) & (cf[..., 0] > 100) & (cf[..., 1] < 130)))
+    olho_f[int(fonte.shape[0] * 0.5):] = False
+    if olho_f.sum() >= 20:
+        from scipy.ndimage import label as _label
+        lab, n = _label(olho_f)
+        tam = np.bincount(lab.ravel())[1:]
+        olho_f = np.isin(lab, np.nonzero(tam >= 0.3 * tam.max())[0] + 1)   # só os olhos; risco fino de brilho fica de fora
+        fys = np.nonzero(olho_f)[0]
+        lab_olho = binary_dilation(olho_f, iterations=3)
+        fundo_olho = fys.max()
+    else:
+        lab_olho, fundo_olho = None, None
+    for ty in range(ty0, ty1 + 1):
+        for tx in range(tx0, tx1 + 1):
+            y, x = ty - dy, tx - dx
             if not (0 <= ty < out.shape[0] and 0 <= tx < out.shape[1]) or not out[ty, tx, 3]:
+                continue
+            if not (0 <= y < fonte.shape[0] and 0 <= x < fonte.shape[1]):
+                out[ty, tx, :3] = cor
                 continue
             if fonte[y, x, 3]:
                 out[ty, tx] = fonte[y, x]
+                px = fonte[y, x, :3].astype(int)
                 # resto de JPEG quase da cor do corpo (risquinho fantasma onde era o olho) vira corpo
-                if np.abs(fonte[y, x, :3].astype(int) - cor.astype(int)).sum() < 70:
+                if np.abs(px - cor.astype(int)).sum() < 70:
                     out[ty, tx, :3] = cor
+                elif px.min() > 150 and lab_olho is not None:
+                    if lab_olho[y, x]:
+                        if branco_alvo is not None and (px.max() - px.min()) < 60:
+                            out[ty, tx, :3] = branco_alvo
+                    elif y < fundo_olho:
+                        out[ty, tx, :3] = cor          # brilho/risco claro na orelha, fora do olho
+                elif (lab_olho is not None and not lab_olho[y, x] and y < fundo_olho
+                      and px.min() > int(cor.min()) + 60 and px.sum() > int(cor.astype(int).sum()) + 150):
+                    out[ty, tx, :3] = cor              # risco azul-claro de brilho (estilo da folha nova)
             else:
                 out[ty, tx, :3] = cor
     return out
+

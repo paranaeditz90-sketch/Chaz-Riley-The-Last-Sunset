@@ -1,7 +1,7 @@
 {
- "frameWidth": 192,
- "frameHeight": 190,
- "originY": 0.9789473684210527,
+ "frameWidth": 264,
+ "frameHeight": 200,
+ "originY": 0.98,
  "characters": {
   "chaz": {
    "image": "assets/sprites/chaz.png",
@@ -10,7 +10,12 @@
     "esquerda",
     "direita",
     "costas",
-    "extras"
+    "extras",
+    "vida",
+    "gesto",
+    "acoes_esquerda",
+    "acoes_direita",
+    "acoes_frente_costas"
    ],
    "anims": {
     "frente_parado": {
@@ -144,9 +149,166 @@
     },
     "frente_piscar": {
      "frames": [
-      31
+      35
      ],
      "fps": 12,
+     "repeat": 0
+    },
+    "frente_olhar_esq": {
+     "frames": [
+      36
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "frente_olhar_dir": {
+     "frames": [
+      37
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "gesto": {
+     "frames": [
+      42,
+      43,
+      43,
+      44
+     ],
+     "fps": 3,
+     "repeat": 0
+    },
+    "agachar_esquerda": {
+     "frames": [
+      49
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "tapar_esquerda": {
+     "frames": [
+      50
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "susto_esquerda": {
+     "frames": [
+      51
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "pegar_esquerda": {
+     "frames": [
+      52
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "ler_esquerda": {
+     "frames": [
+      53
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "bater_esquerda": {
+     "frames": [
+      54
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "agachar_direita": {
+     "frames": [
+      56
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "tapar_direita": {
+     "frames": [
+      57
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "susto_direita": {
+     "frames": [
+      58
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "pegar_direita": {
+     "frames": [
+      59
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "ler_direita": {
+     "frames": [
+      60
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "bater_direita": {
+     "frames": [
+      61
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "agachar_frente": {
+     "frames": [
+      63
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "tapar_frente": {
+     "frames": [
+      64
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "susto_frente": {
+     "frames": [
+      65
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "medo_frente": {
+     "frames": [
+      66
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "sentado_frente": {
+     "frames": [
+      67
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "agachar_costas": {
+     "frames": [
+      68
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "sentado_costas": {
+     "frames": [
+      69
+     ],
+     "fps": 4,
      "repeat": 0
     }
    }
@@ -157,7 +319,11 @@
     "frente",
     "esquerda",
     "direita",
-    "costas"
+    "costas",
+    "vida",
+    "acoes_esquerda",
+    "acoes_direita",
+    "acoes_frente_costas"
    ],
    "anims": {
     "frente_parado": {
@@ -267,6 +433,139 @@
      ],
      "fps": 10,
      "repeat": -1
+    },
+    "frente_piscar": {
+     "frames": [
+      28
+     ],
+     "fps": 12,
+     "repeat": 0
+    },
+    "frente_olhar_esq": {
+     "frames": [
+      29
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "frente_olhar_dir": {
+     "frames": [
+      30
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "agachar_esquerda": {
+     "frames": [
+      35
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "tapar_esquerda": {
+     "frames": [
+      36
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "susto_esquerda": {
+     "frames": [
+      37
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "pegar_esquerda": {
+     "frames": [
+      38
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "ler_esquerda": {
+     "frames": [
+      39
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "bater_esquerda": {
+     "frames": [
+      40
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "agachar_direita": {
+     "frames": [
+      42
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "tapar_direita": {
+     "frames": [
+      43
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "susto_direita": {
+     "frames": [
+      44
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "pegar_direita": {
+     "frames": [
+      45
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "ler_direita": {
+     "frames": [
+      46
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "bater_direita": {
+     "frames": [
+      47
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "susto_frente": {
+     "frames": [
+      51
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "sentado_frente": {
+     "frames": [
+      53
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "agachar_costas": {
+     "frames": [
+      54
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "sentado_costas": {
+     "frames": [
+      55
+     ],
+     "fps": 4,
+     "repeat": 0
     }
    }
   },
@@ -276,7 +575,12 @@
     "frente",
     "esquerda",
     "direita",
-    "costas"
+    "costas",
+    "vida",
+    "gesto",
+    "acoes_esquerda",
+    "acoes_direita",
+    "acoes_frente_costas"
    ],
    "anims": {
     "frente_parado": {
@@ -386,6 +690,181 @@
      ],
      "fps": 10,
      "repeat": -1
+    },
+    "frente_piscar": {
+     "frames": [
+      28
+     ],
+     "fps": 12,
+     "repeat": 0
+    },
+    "frente_olhar_esq": {
+     "frames": [
+      29
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "frente_olhar_dir": {
+     "frames": [
+      30
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "gesto": {
+     "frames": [
+      35
+     ],
+     "fps": 3,
+     "repeat": 0
+    },
+    "deitado": {
+     "frames": [
+      36
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "acordando": {
+     "frames": [
+      37
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "agachar_esquerda": {
+     "frames": [
+      42
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "tapar_esquerda": {
+     "frames": [
+      43
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "susto_esquerda": {
+     "frames": [
+      44
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "pegar_esquerda": {
+     "frames": [
+      45
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "ler_esquerda": {
+     "frames": [
+      46
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "bater_esquerda": {
+     "frames": [
+      47
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "agachar_direita": {
+     "frames": [
+      49
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "tapar_direita": {
+     "frames": [
+      50
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "susto_direita": {
+     "frames": [
+      51
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "pegar_direita": {
+     "frames": [
+      52
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "ler_direita": {
+     "frames": [
+      53
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "bater_direita": {
+     "frames": [
+      54
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "agachar_frente": {
+     "frames": [
+      56
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "tapar_frente": {
+     "frames": [
+      57
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "susto_frente": {
+     "frames": [
+      58
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "medo_frente": {
+     "frames": [
+      59
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "sentado_frente": {
+     "frames": [
+      60
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "agachar_costas": {
+     "frames": [
+      61
+     ],
+     "fps": 4,
+     "repeat": 0
+    },
+    "sentado_costas": {
+     "frames": [
+      62
+     ],
+     "fps": 4,
+     "repeat": 0
     }
    }
   }

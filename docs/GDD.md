@@ -15,6 +15,15 @@
 | Plataforma | HTML5 + JavaScript (Phaser 3), Android via Capacitor. Controle por toque **e** teclado. |
 | Arte | Estilo da folha do Chaz feita no Gemini (v2), **aprovado pelo diretor**: pixel art chibi, cor chapada, contorno preto grosso. As folhas vêm do Gemini (prompts em `docs/PROMPTS_GEMINI.md`) e entram no jogo **como vieram**: o script (`pixel-art/build_sprites.py`) só tira o fundo, recorta e alinha. Nada é redesenhado; o que sair errado volta pro Gemini. **Proibido** conversor de desenho→pixel (o que borra). Quadro 184×192 (resolução original da folha). Volume e sombra vêm da iluminação do jogo, não do sprite. |
 
+## 1b. Cânone do Bruce Bronze (o que vem dos vídeos dele)
+
+- **Chaz Barkley** (sobrenome confirmado num balão), da banda, sempre com o celular. **Riley**, seco por fora e leal por dentro.
+- **Riley não tem gênero marcado** (decisão do diretor, como o Bruce deixa em aberto): nenhum texto do jogo usa pronome
+  ou adjetivo de gênero pra Riley.
+- Também do Bruce: o **filhote laranja** e a **cavalier guitarrista** (nomes a confirmar). Têm papel na história.
+- Cenário de cânone: trigal com linhas de transmissão ao pôr do sol, outono, cachecóis, casas de madeira.
+- **Falas em bilhetes de papel rasgado, com a letra na cor de quem fala**, como nos vídeos. Cada personagem tem a sua caligrafia.
+
 ## 2. Pilares
 
 1. **O que você vê é o que você sabe.** Só existe o que o personagem controlado vê. A lanterna é o olhar.
@@ -55,6 +64,15 @@
 ### Troca de personagem
 - Ocorre em pontos de história e quando alguém morre ou desaparece.
 - Morte é permanente no save. Se todos caem, o capítulo termina num final próprio.
+
+### Direção de cinema (vale pro jogo todo)
+- **Câmera:** cutscenes no próprio jogo, com faixas pretas de cinema, aproximação lenta e enquadramento pensado. A escolha de fala aparece dentro da cena, com tempo nas escolhas tensas.
+- **Luz:** a lanterna é a única luz forte da noite, com sombra de verdade. A cor conta a história (tarde quente, noite fria).
+- **Som:** o medo vem do silêncio que para, não de barulho alto. Um tema musical que volta em momentos-chave. Sem susto barato.
+- **Atuação:** ninguém fica parado como estátua (piscar, olhar, gesto, rabo). Reação a tudo que acontece perto.
+- **Escrita:** nada de explicar o que a imagem já mostra. Cada fala carrega a personalidade de quem fala.
+- **Estrutura:** abertura forte, todo capítulo termina num gancho, fluxograma no fim.
+- **Coerência:** bíblia selada com as regras do mundo + **mapa de pistas**: toda revelação tem pista justa plantada antes.
 
 ## 4. Capítulo 1 — estrutura (sem spoiler)
 

@@ -82,7 +82,7 @@ export default class Teste extends Phaser.Scene {
     cam.setFollowOffset(0, CAM_OFFSET_Y);
     cam.startFollow(this.chars[0].s, true, 0.12, 0.12);
 
-    this.keys = this.input.keyboard.addKeys("W,A,S,D,UP,DOWN,LEFT,RIGHT,SHIFT,TAB,ONE,TWO,THREE");
+    this.keys = this.input.keyboard.addKeys("W,A,S,D,UP,DOWN,LEFT,RIGHT,SHIFT,TAB,ONE,TWO,THREE,C");
     this.input.keyboard.on("keydown-TAB", () => this.trocar((this.ativo + 1) % this.chars.length));
     this.input.keyboard.on("keydown-ONE", () => this.trocar(0));
     this.input.keyboard.on("keydown-TWO", () => this.trocar(1));
@@ -148,6 +148,15 @@ export default class Teste extends Phaser.Scene {
 
     const c = this.chars[this.ativo];
     const len = Math.hypot(vx, vy);
+    const esconder = (k.C.isDown || this.esconderSegurado) && len <= 0.01 && !this.trocando;
+    if (esconder) {
+      this.agachar(c, agora);
+    } else if (c.agachado) {
+      c.agachado = 0;
+      c.prendendo = false;
+      this.parar(c);
+      this.agendarVida(c, agora);
+    }
     if (len > 0.01 && !this.trocando) {
       const nx = vx / len;
       const ny = vy / len;
@@ -185,6 +194,7 @@ export default class Teste extends Phaser.Scene {
   }
 
   agendarVida(c, agora) {
+    c.virarEm = agora + Phaser.Math.Between(4500, 7500);
     c.piscarEm = agora + Phaser.Math.Between(1800, 4800);
     c.olharEm = agora + Phaser.Math.Between(7000, 13000);
     c.gestoEm = agora + Phaser.Math.Between(12000, 20000);
@@ -192,7 +202,7 @@ export default class Teste extends Phaser.Scene {
   }
 
   vida(c, agora) {
-    if (c.moving) return;
+    if (c.moving || c.agachado) return;
     if (c.extraAte) {
       if (agora < c.extraAte) return;
       c.extraAte = 0;
@@ -203,6 +213,13 @@ export default class Teste extends Phaser.Scene {
       c.s.play(`${c.nome}:${nome}`);
       c.extraAte = agora + (a.frames.length * 1000) / a.fps + segurar;
     };
+    // parado de lado/de costas por um tempo, vira pra câmera (como gente esperando) e aí pisca, olha, etc.
+    if (c.facing !== "frente" && agora >= c.virarEm) {
+      c.facing = "frente";
+      this.parar(c);
+      c.piscarEm = agora + Phaser.Math.Between(600, 1500);
+      return;
+    }
     if (agora >= c.piscarEm) {
       // às vezes pisca duas vezes seguidas, como gente
       c.piscarEm = agora + (Math.random() < 0.2 ? 280 : Phaser.Math.Between(2200, 5200));
@@ -219,6 +236,23 @@ export default class Teste extends Phaser.Scene {
         c.facing = "frente";
         return tocar("gesto", 1400);
       }
+    }
+  }
+
+  // esconder: agacha na direção em que está; segurando mais um pouco, tapa a boca (prende a respiração)
+  agachar(c, agora) {
+    const pose = (base) => [`${base}_${c.facing}`, `${base}_esquerda`].find((n) => this.anim(c, n));
+    if (!c.agachado) {
+      c.agachado = agora;
+      c.moving = false;
+      const a = pose("agachar");
+      if (a) c.s.setFrame(this.anim(c, a).frames[0]);
+      return;
+    }
+    if (agora - c.agachado > 900 && !c.prendendo) {
+      const t = pose("tapar");
+      if (t) c.s.setFrame(this.anim(c, t).frames[0]);
+      c.prendendo = true;
     }
   }
 
@@ -289,8 +323,8 @@ export default class Teste extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(UI);
     const dica = toque
-      ? "Arraste do lado esquerdo pra andar (até o fim = correr) · TROCAR muda o personagem"
-      : "WASD/setas: andar · Shift: correr · Tab ou 1/2/3: trocar de personagem";
+      ? "Arraste do lado esquerdo pra andar (até o fim = correr) · segure ESCONDER · TROCAR muda o personagem"
+      : "WASD/setas: andar · Shift: correr · C: esconder (segure) · Tab ou 1/2/3: trocar";
     this.add.text(50, 118, dica, { ...estilo, fontSize: "38px", strokeThickness: 7 }).setScrollFactor(0).setDepth(UI);
   }
 
@@ -313,12 +347,13 @@ export default class Teste extends Phaser.Scene {
     this.botoes = [];
     this.joy = { ativo: false, id: null, bx: 0, by: 0, vx: 0, vy: 0, mag: 0 };
     this.correrSegurado = false;
+    this.esconderSegurado = false;
     this.joyG = this.add.graphics().setScrollFactor(0).setDepth(UI);
 
     const botao = (dx, dy, r, rotulo, aoApertar, aoSoltar) => {
       const c = this.add.circle(0, 0, r, 0xffffff, 0.12).setStrokeStyle(4, 0xffffff, 0.5).setScrollFactor(0).setDepth(UI);
       const t = this.add
-        .text(0, 0, rotulo, { fontFamily: "Trebuchet MS, Verdana, sans-serif", fontSize: "36px", color: "#ffffff" })
+        .text(0, 0, rotulo, { fontFamily: "Trebuchet MS, Verdana, sans-serif", fontSize: rotulo.length > 7 ? "28px" : "36px", color: "#ffffff" })
         .setOrigin(0.5)
         .setScrollFactor(0)
         .setDepth(UI);
@@ -339,6 +374,7 @@ export default class Teste extends Phaser.Scene {
     };
     botao(190, 210, 120, "CORRER", () => (this.correrSegurado = true), () => (this.correrSegurado = false));
     botao(430, 130, 84, "TROCAR", () => this.trocar((this.ativo + 1) % this.chars.length));
+    botao(420, 330, 84, "ESCONDER", () => (this.esconderSegurado = true), () => (this.esconderSegurado = false));
     this.posicionarBotoes();
     this.scale.on("resize", () => this.posicionarBotoes());
 
