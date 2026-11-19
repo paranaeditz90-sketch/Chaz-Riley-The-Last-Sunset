@@ -58,8 +58,8 @@ Este arquivo explica TUDO que você precisa pra continuar o jogo de onde parou. 
   personagem** (`game/src/dialogo.js`): Chaz = Patrick Hand azul; Riley = Permanent Marker vermelho;
   Névoa = Shadows Into Light chumbo. Texto em MAIÚSCULAS.
 - **Voz = som do bicho**: cachorro late, gato mia (tom varia a cada fala). Nada de voz gravada.
-- Som e música: **só CC0 ou CC BY** com crédito em `game/CREDITOS.md`. Música atual: "Evening" (Kevin MacLeod,
-  CC BY 4.0). Freesound/Pixabay bloqueiam download automático; Mixkit ficou de fora (licença não confirmada).
+- Som e música: **só CC0 ou CC BY** com crédito em `game/CREDITOS.md`. Música atual: "Evening" (entardecer) e "Ossuary 1 - A Beginning" (noite),
+  Kevin MacLeod, CC BY 4.0. Freesound/Pixabay bloqueiam download automático; Mixkit ficou de fora (licença não confirmada).
 
 ## 4. Cânone do Bruce (confirmado nos vídeos dele, ver `referencias_bruce/README.md`)
 - **Chaz Barkley** ("Take notes, Barkley"), toca numa banda, vive com o celular, alegre.
@@ -103,7 +103,7 @@ python3 tools/montar_html.py ../the_last_sunset.html
 Precisa só de Python 3. Mande o .html pro diretor; ele abre no Chrome do celular, toca em "Toque pra jogar"
 (tela cheia, deitado). Funciona sem internet.
 
-Controles: WASD/setas andar · Shift correr · E falar (perto de alguém) · C esconder (segurar) · Tab/1/2/3 trocar.
+Controles: WASD/setas andar · Shift correr · E falar (perto de alguém) · C esconder (segurar) · Tab/1/2/3 trocar · N noite.
 No toque: arrastar à esquerda (até o fim = correr), botões CORRER, TROCAR, ESCONDER, FALAR.
 
 ## 7. Como entra uma folha nova de sprite
@@ -122,14 +122,17 @@ No toque: arrastar à esquerda (até o fim = correr), botões CORRER, TROCAR, ES
 - Jogo: câmera segue, troca de personagem, quem fica parado de lado vira pra câmera e pisca, trigo balança
   e volta quando alguém passa, poeira ao correr, passos na grama, vento, música, conversa em bilhete com voz.
 - Riley sem gestos de braço cruzado ainda e sem 3 poses de frente (as da IA vieram erradas).
+- **Noite e lanterna** (`game/src/luz.js`, tecla N / botão NOITE no teste): breu, lanterna do personagem
+  controlado (halo + cone ~64° em degraus) que aponta pra onde ele anda e vira pra quem está falando; quem está
+  no facho projeta sombra pro lado oposto; quem está perto no escuro vira contorno fraco. No pôr do sol, sombra
+  comprida pro leste. Música e ambiente trocam (Ossuary 1 + grilos à noite). Conversas próprias de noite.
 
 ## 9. Próximos passos (em ordem)
 1. **Andar em 8 quadros** pros três (perna passando pela outra). Prompt: `docs/PROMPTS_GEMINI.md`, rodada 4,
    com a referência limpa.
 2. **Rabo balançando parado** (rodada 3b / prompt do ChatGPT com referência limpa).
 3. **Riley**: poses de braço cruzado, agachar/tapar/medo de frente (rodada 3d, proporção certa).
-4. **Lanterna e escuridão**: cone na direção do último movimento, halo, luz em degraus, sombra; o Névoa
-   (escuro) precisa de contorno de luz pra não sumir.
+4. Lanterna: falta bateria limitada em trechos, esconderijos que bloqueiam a luz, e sombra do trigo.
 5. **Cenários** do capítulo 1 (casa, rua, morro, trigal de noite) e **moradores** (inclui o filhote e a cavalier).
 6. **Cutscenes** com escolha de fala (com tempo nas tensas), flags, fluxograma, e o capítulo 1 em si.
 

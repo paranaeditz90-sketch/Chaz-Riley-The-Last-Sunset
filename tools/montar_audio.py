@@ -106,4 +106,5 @@ def musica(rel, name, kbps=96):
 
 
 musica("musica/Evening.mp3", "musica_entardecer")
+musica("musica/Ossuary 1 - A Beginning.mp3", "musica_noite", kbps=80)
 print("ok", OUT, sorted(os.listdir(OUT)))

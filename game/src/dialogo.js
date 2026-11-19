@@ -42,6 +42,37 @@ export const CONVERSAS = {
   ],
 };
 
+// Mesmas duplas, de noite (tom de tensão, sem spoiler).
+export const CONVERSAS_NOITE = {
+  "chaz>riley": [
+    ["chaz", "RILEY... VOCÊ TÁ OUVINDO ISSO?"],
+    ["riley", "TÔ OUVINDO VOCÊ. SÓ VOCÊ."],
+    ["chaz", "ENTÃO FICA PERTO DA LUZ."],
+  ],
+  "chaz>nevoa": [
+    ["chaz", "NÉVOA, FICA PERTO."],
+    ["nevoa", "...EU TÔ PERTO."],
+  ],
+  "riley>chaz": [
+    ["riley", "APONTA ESSA LUZ PRA FRENTE, CHAZ."],
+    ["chaz", "TÔ APONTANDO PRA VOCÊ."],
+    ["riley", "...EU SEI."],
+  ],
+  "riley>nevoa": [
+    ["riley", "NÃO SOME DE VISTA."],
+    ["nevoa", "...TÁ."],
+  ],
+  "nevoa>chaz": [
+    ["nevoa", "CHAZ... O ESCURO TÁ MAIS PERTO QUE ANTES?"],
+    ["chaz", "É SÓ A NOITE. A NOITE NÃO ANDA."],
+  ],
+  "nevoa>riley": [
+    ["nevoa", "...VOCÊ TÁ COM MEDO?"],
+    ["riley", "NÃO."],
+    ["riley", "...UM POUCO."],
+  ],
+};
+
 const LETRAS_POR_SEG = 32;
 
 // Papel rasgado: retângulo com borda serrilhada irregular, levemente torto.

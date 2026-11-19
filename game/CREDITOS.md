@@ -5,8 +5,8 @@ Só entra no jogo material com licença confirmada. CC0 = domínio público (cr�
 ## Música
 - **"Evening"**, Kevin MacLeod (incompetech.com). Licença: Creative Commons: By Attribution 4.0
   (https://creativecommons.org/licenses/by/4.0/). Usada no entardecer.
-- Reservadas (baixadas, ainda não usadas), mesma licença e autor: "Almost Bliss", "Ossuary 1 - A Beginning",
-  "Unseen Horrors", "Bittersweet".
+- **"Ossuary 1 - A Beginning"**, Kevin MacLeod (incompetech.com), CC BY 4.0. Usada na noite.
+- Reservadas (baixadas, ainda não usadas), mesma licença e autor: "Almost Bliss", "Unseen Horrors", "Bittersweet".
 
 ## Efeitos (CC0)
 - Passos (grama, madeira) e papel do balão (bookFlip): Kenney, "Impact Sounds" e "RPG Audio" — kenney.nl, CC0.

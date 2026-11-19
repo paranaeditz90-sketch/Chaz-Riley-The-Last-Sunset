@@ -1,5 +1,6 @@
 import Phaser from "phaser";
-import { CONVERSAS, Dialogo } from "../dialogo.js";
+import { CONVERSAS, CONVERSAS_NOITE, Dialogo } from "../dialogo.js";
+import { Luz } from "../luz.js";
 
 // Cena de teste: os três personagens no jogo, andando/correndo nas 4 direções e trocando de ponto de vista.
 // Cenário provisório (chão e trigo de mentira). Lanterna, luz e sombra entram na próxima etapa.
@@ -17,7 +18,7 @@ const UI = 1e7;
 const AUDIO = [
   "voz_chaz_1", "voz_chaz_2", "voz_chaz_3", "voz_riley_1", "voz_riley_2", "voz_riley_3", "voz_nevoa_1", "voz_nevoa_2",
   "papel_1", "papel_2", "papel_3", "passo_grama_0", "passo_grama_1", "passo_grama_2", "passo_grama_3", "passo_grama_4",
-  "folhas", "vento_loop", "musica_entardecer",
+  "folhas", "vento_loop", "musica_entardecer", "musica_noite", "grilos_loop",
 ];
 
 export default class Teste extends Phaser.Scene {
@@ -102,6 +103,42 @@ export default class Teste extends Phaser.Scene {
     this.criarToque();
     this.dialogo = new Dialogo(this);
     this.criarSom();
+    this.luz = new Luz(this, this.chars);
+    this.noite = false;
+    this.mov = { x: 0, y: 0 };
+    this.input.keyboard.on("keydown-N", () => this.alternarNoite());
+  }
+
+  // ---------------------------------------------------------------- pôr do sol <-> noite (teste)
+  alternarNoite() {
+    this.noite = !this.noite;
+    this.luz.ligarNoite(this.noite);
+    const frio = 0x8a96c4; // luar: tira o dourado do chão e do trigo
+    if (this.noite) {
+      this.chao.setTint(frio);
+      this.trigos.forEach((w) => w.setTint(frio));
+    } else {
+      this.chao.clearTint();
+      this.trigos.forEach((w) => w.clearTint());
+    }
+    // troca de música e ambiente com cruzamento suave
+    const sai = this.noite ? this.musica : this.musicaNoite;
+    const entra = this.noite ? this.musicaNoite : this.musica;
+    if (sai && entra) {
+      this.tweens.add({ targets: sai, volume: 0, duration: 1800, onComplete: () => sai.pause() });
+      if (entra.isPaused) entra.resume();
+      else if (!entra.isPlaying) entra.play();
+      entra.setVolume(0);
+      this.tweens.add({ targets: entra, volume: this.noite ? 0.34 : 0.3, duration: 2400 });
+      this.tweens.add({ targets: this.vento, volume: this.noite ? 0.1 : 0.2, duration: 1500 });
+      if (this.noite) {
+        if (!this.grilos.isPlaying) this.grilos.play();
+        this.tweens.add({ targets: this.grilos, volume: 0.22, duration: 2000 });
+      } else {
+        this.tweens.add({ targets: this.grilos, volume: 0, duration: 1500 });
+      }
+    }
+    this.hudNoite.setText(this.noite ? "Noite: a lanterna aponta pra onde você anda" : "");
   }
 
   // ---------------------------------------------------------------- som
@@ -109,6 +146,8 @@ export default class Teste extends Phaser.Scene {
     this.somEm = {};
     const comecar = () => {
       this.musica = this.sound.add("musica_entardecer", { loop: true, volume: 0.3 });
+      this.musicaNoite = this.sound.add("musica_noite", { loop: true, volume: 0 });
+      this.grilos = this.sound.add("grilos_loop", { loop: true, volume: 0 });
       this.vento = this.sound.add("vento_loop", { loop: true, volume: 0.2 });
       this.musica.play();
       this.vento.play();
@@ -151,7 +190,8 @@ export default class Teste extends Phaser.Scene {
       }
     }
     if (!alvo) return;
-    const falas = CONVERSAS[`${c.nome}>${alvo.nome}`];
+    const falas = (this.noite ? CONVERSAS_NOITE : CONVERSAS)[`${c.nome}>${alvo.nome}`];
+    this.parceiro = alvo;
     if (!falas) return;
     // um olha pro outro
     for (const [a, b] of [[c, alvo], [alvo, c]]) {
@@ -213,6 +253,7 @@ export default class Teste extends Phaser.Scene {
       }
     });
     this.hudNome.setText(NOMES[c.nome]);
+    this.luz.angulo = { frente: Math.PI / 2, costas: -Math.PI / 2, esquerda: Math.PI, direita: 0 }[c.facing];
   }
 
   update() {
@@ -245,6 +286,9 @@ export default class Teste extends Phaser.Scene {
         this.vida(ch, agora);
         ch.s.setDepth(ch.s.y);
       }
+      // na conversa, a lanterna vira pra quem está falando com você
+      const pa = this.parceiro;
+      this.luz.update(c, pa ? pa.s.x - c.s.x : 0, pa ? pa.s.y - c.s.y : 0, dt);
       this.desenharJoystick();
       return;
     }
@@ -267,6 +311,8 @@ export default class Teste extends Phaser.Scene {
       c.facing = this.direcao(c, nx, ny);
       c.moving = true;
       c.extraAte = 0;
+      this.mov.x = nx;
+      this.mov.y = ny;
       c.s.play(`${c.nome}:${c.facing}_${correr ? "correr" : "andar"}`, true);
       this.balancarTrigo(c, nx);
       if (correr && agora >= (c.poeiraEm || 0)) {
@@ -284,6 +330,7 @@ export default class Teste extends Phaser.Scene {
       this.vida(ch, agora);
       ch.s.setDepth(ch.s.y);
     }
+    this.luz.update(c, c.moving ? this.mov.x : 0, c.moving ? this.mov.y : 0, dt);
     this.desenharJoystick();
   }
 
@@ -411,7 +458,7 @@ export default class Teste extends Phaser.Scene {
     g.generateTexture("trigo", 64, 96);
     g.destroy();
 
-    this.add.tileSprite(0, 0, MUNDO_W, MUNDO_H, "chao").setOrigin(0).setDepth(-1e6);
+    this.chao = this.add.tileSprite(0, 0, MUNDO_W, MUNDO_H, "chao").setOrigin(0).setDepth(-1e6);
     this.trigos = [];
     const livre = [[2960, 1650], [3200, 1600], [3440, 1660]];
     for (let i = 0; i < 760; i++) {
@@ -434,8 +481,10 @@ export default class Teste extends Phaser.Scene {
       .setDepth(UI);
     const dica = toque
       ? "Arraste à esquerda pra andar (até o fim = correr) · FALAR perto de alguém · segure ESCONDER"
-      : "WASD/setas: andar · Shift: correr · E: falar · C: esconder · Tab/1/2/3: trocar";
+      : "WASD/setas: andar · Shift: correr · E: falar · C: esconder · Tab/1/2/3: trocar · N: noite";
     this.hud.push(this.hudNome, this.add.text(50, 118, dica, { ...estilo, fontSize: "38px", strokeThickness: 7 }).setScrollFactor(0).setDepth(UI));
+    this.hudNoite = this.add.text(50, 170, "", { ...estilo, fontSize: "34px", strokeThickness: 6, color: "#cfd6ff" }).setScrollFactor(0).setDepth(UI);
+    this.hud.push(this.hudNoite);
   }
 
   // raio do joystick em pixels do jogo equivalente a ~60 px de tela, seja celular ou tablet
@@ -486,6 +535,7 @@ export default class Teste extends Phaser.Scene {
     botao(430, 130, 84, "TROCAR", () => this.trocar((this.ativo + 1) % this.chars.length));
     botao(430, 330, 84, "ESCONDER", () => (this.esconderSegurado = true), () => (this.esconderSegurado = false));
     botao(660, 150, 84, "FALAR", () => (this.dialogo.ativo ? this.dialogo.avancar() : this.conversar()));
+    botao(120, 960, 70, "NOITE", () => this.alternarNoite());
     this.posicionarBotoes();
     this.scale.on("resize", () => this.posicionarBotoes());
 
