@@ -81,7 +81,7 @@ Todo esse conteúdo está a serviço da história.
 - O traço do Bruce Bronze evoluiu de quase sem linha (set/2026) para linha preta média/grossa e cor chapada (out–nov/2026). Os sprites seguem a fase atual: **contorno escuro em todo o personagem**.
 - O Bruce não usa hue shift, e o estilo Gemini aprovado também é chapado. Hue shift fica pra cenário e iluminação.
 - Proporção: Chaz ≈ 3 cabeças de altura. Na Riley, as orelhas somam ~14% da altura e são a silhueta dela.
-- Paleta do Chaz (folha final): `#2a3be8` (corpo) `#000000` (contorno) `#ffffff` (olho e "3") `#8a4fd8` (íris) `#3a1a6a` (pupila) `#ff6f91` (boca). Riley e Névoa: definidas quando as folhas chegarem.
+- Paleta do Chaz (folha final): `#2a3be8` (corpo) `#000000` (contorno) `#ffffff` (olho e "3") `#8a4fd8` (íris) `#3a1a6a` (pupila) `#ff6f91` (boca). Riley: vinho `#721321`. Névoa: chumbo `#37252d` (escuro, puxado pro ameixa, como veio do Gemini; cor confirmada pelo diretor). A visibilidade dele no escuro se resolve na iluminação, não mudando a cor.
 
 ## 8. Avisos de projeto
 
