@@ -385,3 +385,16 @@ Linha 3: o Chaz virado pra direita (o 3º da imagem), rabo pra cima / no meio / 
 Linha 4: o Chaz de costas (o 4º da imagem), rabo pra esquerda / no meio / pra direita.
 Rabo de cachorro peludo, igual ao da imagem. Fundo verde liso (#00FF00), sem sombra, sem texto.
 ```
+
+---
+
+## Cenários (ChatGPT) — anexar a referência limpa do Chaz pra acertar a escala
+
+### Quarto do Chaz (FEITO: `pixel-art/cenarios/fonte/quarto_chaz_chatgpt.png`)
+```
+A imagem anexada mostra o personagem (Chaz) no estilo do jogo. Crie um CENÁRIO em pixel art nesse MESMO estilo (contorno preto grosso, cores chapadas, sem degradê, sem borrado), visto de cima e levemente inclinado (estilo RPG, vista 3/4).
+É o QUARTO do Chaz, um jovem músico, no fim da tarde: luz laranja do pôr do sol entrando por uma janela grande na parede de cima.
+No quarto: cama de solteiro desarrumada, escrivaninha com um caderno aberto e papéis, um violão encostado num amplificador pequeno, pôsteres de banda nas paredes, roupas jogadas no chão, um tapete, uma porta na parede de baixo.
+Escala: o personagem da imagem tem que caber de pé no quarto com folga; a porta tem mais ou menos 1,3 vez a altura dele; o quarto inteiro aparece na imagem.
+Formato 16:9 (horizontal). SEM personagens, sem texto legível, sem moldura.
+```

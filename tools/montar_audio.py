@@ -83,6 +83,9 @@ for i in range(5):
 R = "kenney_rpg-audio/Audio/"
 for i in (1, 2, 3):
     save(norm(fades(trim(load(f"{R}bookFlip{i}.ogg"), -45), 0.002, 0.04), 0.45), f"papel_{i}", 64)
+for i in range(3):
+    save(norm(fades(trim(load(f"{K}impactGlass_light_00{i}.ogg"), -45), 0.002, 0.03), 0.55), f"batida_vidro_{i}", 64)
+save(norm(fades(trim(load(f"{R}doorOpen_1.ogg"), -45), 0.002, 0.08), 0.5), "porta_abre", 64)
 folhas = load("oga/random-sounds-samples/moving leaves stereo.ogg")
 save(norm(fades(trim(folhas, -40), 0.01, 0.15), 0.4), "folhas", 64)
 

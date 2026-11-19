@@ -28,6 +28,12 @@ for (const f of readdirSync(aud).filter((f) => f.endsWith(".mp3"))) {
   audio[f.replace(/\.mp3$/, "")] = "data:audio/mpeg;base64," + readFileSync(join(aud, f)).toString("base64");
 }
 
+const cen = join(raiz, "public/assets/cenarios");
+const imagens = {};
+for (const f of readdirSync(cen).filter((f) => f.endsWith(".png"))) {
+  imagens[f.replace(/\.png$/, "")] = "data:image/png;base64," + readFileSync(join(cen, f)).toString("base64");
+}
+
 let html = readFileSync(join(dist, "index.html"), "utf8");
 html = html.replace(/url\(assets\/fonts\/([^)]+\.ttf)\)/g, (_m, f) =>
   `url(data:font/ttf;base64,${readFileSync(join(raiz, "public/assets/fonts", f)).toString("base64")})`);
@@ -37,6 +43,7 @@ html = html.replace(tag[0], "");
 const embutido =
   `<script>window.__SPRITES__ = ${JSON.stringify({ meta, images })};</script>\n` +
   `<script>window.__AUDIO__ = ${JSON.stringify(audio)};</script>\n` +
+  `<script>window.__IMAGENS__ = ${JSON.stringify(imagens)};</script>\n` +
   `<script type="module">\n${codigo}\n</script>\n`;
 html = html.replace("</body>", () => embutido + "</body>");
 writeFileSync(saida, html);

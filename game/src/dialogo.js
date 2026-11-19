@@ -8,6 +8,7 @@ import { marcar, registrarEscolha } from "./estado.js";
 export const FALANTES = {
   chaz: { nome: "Chaz", cor: "#1a34e1", fonte: "Patrick Hand", tam: 50, vozes: ["voz_chaz_1", "voz_chaz_2", "voz_chaz_3"], tom: [1.0, 1.12], vol: 0.55 },
   riley: { nome: "Riley", cor: "#b3122b", fonte: "Permanent Marker", tam: 42, vozes: ["voz_riley_1", "voz_riley_2", "voz_riley_3"], tom: [0.95, 1.06], vol: 0.5 },
+  cavalier: { nome: "Cavalier", cor: "#a4431f", fonte: "Kalam", tam: 46, vozes: ["voz_cavalier_1"], tom: [0.95, 1.08], vol: 0.5 },
   nevoa: { nome: "Névoa", cor: "#4e3a46", fonte: "Shadows Into Light", tam: 50, vozes: ["voz_nevoa_1", "voz_nevoa_2"], tom: [0.78, 0.88], vol: 0.45 },
 };
 
@@ -112,6 +113,12 @@ export class Dialogo {
 
   // falas: [[quemFala, texto], ...]; atores: { chaz: sprite, ... }
   iniciar(falas, atores, aoTerminar) {
+    // fala chegando com outra aberta: entra na fila (antes, a nova tomava o lugar e a antiga nunca "terminava")
+    if (this.ativo) {
+      this.fila = this.fila || [];
+      this.fila.push([falas, atores, aoTerminar]);
+      return;
+    }
     this.ativo = true;
     this.falas = falas.slice(); // cópia: a escolha insere as falas do caminho escolhido
     this.atores = atores;
@@ -282,5 +289,9 @@ export class Dialogo {
     const fim = this.aoTerminar;
     this.aoTerminar = null;
     if (fim) fim();
+    if (!this.ativo && this.fila && this.fila.length) {
+      const [f, a, t] = this.fila.shift();
+      cena.time.delayedCall(250, () => this.iniciar(f, a, t));
+    }
   }
 }

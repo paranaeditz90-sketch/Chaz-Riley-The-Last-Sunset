@@ -21,7 +21,7 @@ function degrau(t) {
   return 0;
 }
 
-function criarTexturas(cena) {
+export function criarTexturas(cena) {
   if (!cena.textures.exists("luz_halo")) {
     const d = HALO_R * 2;
     const tx = cena.textures.createCanvas("luz_halo", d, d);

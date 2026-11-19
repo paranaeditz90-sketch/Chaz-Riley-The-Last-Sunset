@@ -75,9 +75,18 @@ Este arquivo explica TUDO que você precisa pra continuar o jogo de onde parou. 
 jogo/                      projeto inteiro (é o repositório público)
   game/                    o jogo (Phaser 3.90)
     index.html             página (fontes @font-face)
-    src/main.js            inicia o Phaser (espera as fontes carregarem)
-    src/scenes/Teste.js    cena atual: andar, correr, trocar, esconder, conversar, vida, som
-    src/dialogo.js         bilhetes de fala + voz do bicho + faixas de cinema
+    src/main.js            inicia o Phaser (espera as fontes) e lista as cenas
+    src/base.js            CenaJogo: base de toda cena jogável (andar com colisão, vida, esconder, conversa,
+                           objetos interativos com "AÇÃO", cutscene com await: dizer/esperar/andarAte/virar)
+    src/estado.js          flags e escolhas salvas no aparelho
+    src/dialogo.js         bilhetes de fala + voz do bicho + escolha com tempo + faixas de cinema
+    src/luz.js             noite, lanterna, sombras
+    src/scenes/Boot.js     carrega tudo (lista AUDIO e CENARIOS aqui)
+    src/scenes/Titulo.js   tela de título (+ "campo de testes")
+    src/scenes/Aviso.js    aviso +18
+    src/scenes/Abertura.js abertura fria (vídeo de celular) + Cartela (texto em tela preta)
+    src/scenes/Quarto.js   PRÓLOGO cena 1: quarto do Chaz (cenário = imagem do ChatGPT)
+    src/scenes/Teste.js    campo de testes (trigal, noite com N)
     public/assets/         sprites (png + sprites.json), audio (mp3), fonts (ttf)
     vendor/                phaser.min.js (pra montar sem npm)
     CREDITOS.md            licenças de som/música/fonte
@@ -126,6 +135,16 @@ No toque: arrastar à esquerda (até o fim = correr), botões CORRER, TROCAR, ES
   controlado (halo + cone ~64° em degraus) que aponta pra onde ele anda e vira pra quem está falando; quem está
   no facho projeta sombra pro lado oposto; quem está perto no escuro vira contorno fraco. No pôr do sol, sombra
   comprida pro leste. Música e ambiente trocam (Ossuary 1 + grilos à noite). Conversas próprias de noite.
+
+## 8b. Jogo de verdade (começou)
+Fluxo: Título → Aviso → Abertura (vídeo de 12 s, pulável depois de visto) → "THE LAST SUNSET" / "Seis horas antes."
+→ Quarto do Chaz (caderno, violão, cama/carta, janela, discos; batem na janela: cavalier e Riley; escolhas com tempo)
+→ porta → "Continua...". Próxima cena: a rua (precisa do cenário).
+
+Como fazer uma cena nova: copiar Quarto.js. `config()` (personagens, área andável, obstáculos em pixels da imagem,
+piso, câmera fixa ou seguindo), `criarCenario()` (imagem de fundo), `aoEntrar()` (interativos e roteiro com
+`await this.dizer([...])`). Registrar em main.js, Boot.js (CENARIOS) e tools/montar_html.py (ORDEM).
+Cenário novo: salvar em `game/public/assets/cenarios/<nome>.png`. Medir móveis numa cópia com grade.
 
 ## 9. Próximos passos (em ordem)
 1. **Andar em 8 quadros** pros três (perna passando pela outra). Prompt: `docs/PROMPTS_GEMINI.md`, rodada 4,
