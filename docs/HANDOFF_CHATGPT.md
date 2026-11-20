@@ -165,3 +165,25 @@ Cenário novo: salvar em `game/public/assets/cenarios/<nome>.png`. Medir móveis
 - Falas no bilhete com cor e letra de cada um; voz = latido/miado.
 - Entregas como arquivo HTML (não página do Claude).
 - História "nível cinema", coerente do começo ao fim (bíblia selada + mapa de pistas).
+
+## 11. Onde paramos (20/11/2026) — retomar no domingo
+
+Versão jogável: v0.1 (título → aviso → abertura → quarto do Chaz → "Continua..."). Tudo salvo nos dois repositórios.
+
+Pendências, em ordem:
+1. **Cenário da rua** (prompt já enviado ao diretor, panorâmico 3:1): aguardando a imagem. Com ela: cena `Rua`
+   (câmera seguindo, moradores de passagem, casa branca com a van, igreja, Correios), ligada à porta do quarto.
+2. **Rabo balançando do Chaz, 2ª tentativa do ChatGPT** (`pixel-art/chaz/fonte/chaz_rabo_chatgpt_v2.png`), avaliada
+   lado a lado e AINDA NÃO RESPONDIDA ao diretor:
+   - corpo e cabeça agora batem com o jogo (bem melhor que a 1ª);
+   - **costas**: usável;
+   - **frente**: quase (olho creme e boquinha diferentes; dá pra colar o rosto do jogo com `trocar_rosto`);
+   - **perfis**: NÃO (olhos fechados nos 6 quadros, risco de brilho na cabeça e o "3" espelhado no perfil direito).
+   Proposta: usar costas + frente (com o rosto do jogo) e pedir de novo só os perfis.
+3. **Riley**: poses de braço cruzado e agachar/tapar/medo de frente (prompt da rodada 3d).
+4. **Andar em 8 quadros** dos três (rodada 4), com a referência limpa.
+5. **Esconder no trigo alto** (trigo cobre o personagem, a lanterna não atravessa, prender a respiração com tempo):
+   oferecido ao diretor, sem resposta ainda.
+6. **Nome da cavalier**: perguntado ao diretor, sem resposta (não inventar nome por cima de personagem do Bruce).
+
+Pra testar no navegador local: `cd game && npm install && npm run build && npx vite preview --port 4173`.
