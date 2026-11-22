@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { Dialogo } from "./dialogo.js";
+import { pontoDeSalvamento } from "./estado.js";
 import { Luz } from "./luz.js";
 
 // Base de toda cena jogável: personagens, andar/correr com colisão, vida (piscar, olhar, gesto), esconder,
@@ -67,12 +68,16 @@ export class CenaJogo extends Phaser.Scene {
 
   create() {
     this.cfg = Object.assign(
-      { personagens: [], controla: null, mundo: { w: 1920, h: 1080 }, area: null, obstaculos: [], piso: "grama", luz: false, cameraFixa: null, esconder: true },
+      { personagens: [], controla: null, mundo: { w: 1920, h: 1080 }, area: null, obstaculos: [], piso: "grama", luz: false, cameraFixa: null, esconder: true, salvar: true },
       this.config(),
     );
     this.meta = this.cache.json.get("sprites");
+    if (this.cfg.salvar) pontoDeSalvamento(this.scene.key); // CONTINUAR volta pro começo desta cena
     this.interativos = [];
     this.travado = false;
+    this.livreEm = 0;
+    this.parceiro = null;
+    this.emCinema = false;
     this.criarCenario();
 
     this.chars = this.cfg.personagens.map(({ nome, x, y, facing }) => {
@@ -285,6 +290,18 @@ export class CenaJogo extends Phaser.Scene {
 
   mostrarHud(v) {
     (this.hud || []).forEach((h) => h.setVisible(v));
+  }
+
+  // cutscene: esconde HUD, dicas e botões de toque (na cutscene, tocar em qualquer lugar avança a fala)
+  modoCinema(on) {
+    this.emCinema = on;
+    this.mostrarHud(!on);
+    const toque = this.sys.game.device.input.touch;
+    for (const b of this.botoes || []) {
+      b.c.setVisible(!on && toque);
+      b.t.setVisible(!on && toque);
+    }
+    if (on) Object.assign(this.joy, { ativo: false, vx: 0, vy: 0, mag: 0 });
   }
 
   // ---------------------------------------------------------------- personagens

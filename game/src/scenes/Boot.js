@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { carregar } from "../estado.js";
+import { ANCORAS } from "../retratos_dados.js";
 
 // Carrega tudo uma vez só (sprites, sons, cenários), cria as animações e as texturas feitas por código.
 // Na versão arquivo único (HTML), tudo já vem embutido na página: nada é buscado na rede.
@@ -13,6 +14,8 @@ export const AUDIO = [
   "voz_nevoa_1", "voz_nevoa_2", "voz_riley_1", "voz_riley_2", "voz_riley_3",
 ];
 export const CENARIOS = ["quarto"];
+// fundos das cutscenes (desfoque de lente sobre o cenário)
+export const CINEMA = ["quarto", "ceu_tarde"];
 
 export default class Boot extends Phaser.Scene {
   constructor() {
@@ -27,8 +30,12 @@ export default class Boot extends Phaser.Scene {
 
     const aud = window.__AUDIO__;
     for (const k of AUDIO) this.load.audio(k, aud ? aud[k] : `assets/audio/${k}.mp3`);
+    // arquivo único: imagens embutidas em window.__IMAGENS__ com a chave "pasta/nome"
     const img = window.__IMAGENS__;
-    for (const k of CENARIOS) this.load.image(`cenario_${k}`, img ? img[k] : `assets/cenarios/${k}.png`);
+    const src = (pasta, nome, ext) => (img ? img[`${pasta}/${nome}`] : `assets/${pasta}/${nome}.${ext}`);
+    for (const k of CENARIOS) this.load.image(`cenario_${k}`, src("cenarios", k, "png"));
+    for (const k of CINEMA) this.load.image(`cine_${k}`, src("cinema", k, "jpg"));
+    for (const k of Object.keys(ANCORAS)) this.load.image(`ret_${k}`, src("retratos", k, "png"));
 
     const emb = window.__SPRITES__;
     if (emb) {
@@ -56,7 +63,11 @@ export default class Boot extends Phaser.Scene {
       }
     }
     // cenários pintados (IA) ficam suaves ao ampliar; personagens continuam nítidos
-    for (const k of CENARIOS) this.textures.get(`cenario_${k}`).setFilter(Phaser.Textures.FilterMode.LINEAR);
+    const suave = (k) => this.textures.get(k).setFilter(Phaser.Textures.FilterMode.LINEAR);
+    for (const k of CENARIOS) suave(`cenario_${k}`);
+    // arte em alta das cutscenes: suave ao ampliar (o jogo é pixelArt, então o padrão seria serrilhado)
+    for (const k of CINEMA) suave(`cine_${k}`);
+    for (const k of Object.keys(ANCORAS)) suave(`ret_${k}`);
     this.texturasDeCodigo();
     this.scene.start("Titulo");
   }
@@ -96,5 +107,31 @@ export default class Boot extends Phaser.Scene {
     }
     g.generateTexture("grao", 256, 256);
     g.destroy();
+    this.texturasCinema();
+  }
+
+  texturasCinema() {
+    // vinheta: borda escurecendo devagar, centro limpo
+    const v = this.textures.createCanvas("cine_vinheta", 640, 360);
+    const cv = v.getContext();
+    const gr = cv.createRadialGradient(320, 180, 90, 320, 180, 380);
+    gr.addColorStop(0, "rgba(0,0,0,0)");
+    gr.addColorStop(0.55, "rgba(0,0,0,0.12)");
+    gr.addColorStop(1, "rgba(0,0,0,0.62)");
+    cv.fillStyle = gr;
+    cv.fillRect(0, 0, 640, 360);
+    v.refresh();
+    v.setFilter(Phaser.Textures.FilterMode.LINEAR);
+    // brilho redondo e macio (poeira na luz)
+    const b = this.textures.createCanvas("cine_brilho", 32, 32);
+    const cb = b.getContext();
+    const gb = cb.createRadialGradient(16, 16, 0, 16, 16, 16);
+    gb.addColorStop(0, "rgba(255,255,255,1)");
+    gb.addColorStop(0.4, "rgba(255,255,255,0.5)");
+    gb.addColorStop(1, "rgba(255,255,255,0)");
+    cb.fillStyle = gb;
+    cb.fillRect(0, 0, 32, 32);
+    b.refresh();
+    b.setFilter(Phaser.Textures.FilterMode.LINEAR);
   }
 }

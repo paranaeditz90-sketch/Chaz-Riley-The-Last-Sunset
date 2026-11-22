@@ -28,10 +28,15 @@ for (const f of readdirSync(aud).filter((f) => f.endsWith(".mp3"))) {
   audio[f.replace(/\.mp3$/, "")] = "data:audio/mpeg;base64," + readFileSync(join(aud, f)).toString("base64");
 }
 
-const cen = join(raiz, "public/assets/cenarios");
 const imagens = {};
-for (const f of readdirSync(cen).filter((f) => f.endsWith(".png"))) {
-  imagens[f.replace(/\.png$/, "")] = "data:image/png;base64," + readFileSync(join(cen, f)).toString("base64");
+for (const pasta of ["cenarios", "retratos", "cinema"]) {
+  const d = join(raiz, "public/assets", pasta);
+  for (const f of readdirSync(d)) {
+    const m = f.match(/^(.*)\.(png|jpg)$/);
+    if (!m) continue;
+    const mime = m[2] === "png" ? "image/png" : "image/jpeg";
+    imagens[`${pasta}/${m[1]}`] = `data:${mime};base64,` + readFileSync(join(d, f)).toString("base64");
+  }
 }
 
 let html = readFileSync(join(dist, "index.html"), "utf8");

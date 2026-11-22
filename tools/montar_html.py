@@ -18,7 +18,8 @@ import sys
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 G = os.path.join(RAIZ, "game")
 # ordem importa: quem é usado vem antes de quem usa
-ORDEM = ["src/estado.js", "src/dialogo.js", "src/luz.js", "src/base.js", "src/scenes/Boot.js", "src/scenes/Titulo.js",
+ORDEM = ["src/estado.js", "src/dialogo.js", "src/retratos_dados.js", "src/cinema.js", "src/luz.js", "src/base.js",
+         "src/scenes/Boot.js", "src/scenes/Titulo.js",
          "src/scenes/Aviso.js", "src/scenes/Abertura.js", "src/scenes/Quarto.js", "src/scenes/Teste.js", "src/main.js"]
 
 
@@ -45,8 +46,14 @@ def main(saida):
     aud = os.path.join(G, "public", "assets", "audio")
     audio = {f[:-4]: "data:audio/mpeg;base64," + b64(os.path.join(aud, f)) for f in sorted(os.listdir(aud)) if f.endswith(".mp3")}
 
-    cen = os.path.join(G, "public", "assets", "cenarios")
-    imagens = {f[:-4]: "data:image/png;base64," + b64(os.path.join(cen, f)) for f in sorted(os.listdir(cen)) if f.endswith(".png")}
+    imagens = {}
+    for pasta in ("cenarios", "retratos", "cinema"):
+        d = os.path.join(G, "public", "assets", pasta)
+        for f in sorted(os.listdir(d)):
+            nome, ext = os.path.splitext(f)
+            mime = {".png": "image/png", ".jpg": "image/jpeg"}.get(ext)
+            if mime:
+                imagens[f"{pasta}/{nome}"] = f"data:{mime};base64," + b64(os.path.join(d, f))
 
     html = open(os.path.join(G, "index.html"), encoding="utf-8").read()
     html = re.sub(r"url\(assets/fonts/([^)]+\.ttf)\)",

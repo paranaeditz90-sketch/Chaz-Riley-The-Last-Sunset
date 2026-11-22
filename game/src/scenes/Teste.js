@@ -22,6 +22,7 @@ export default class Teste extends CenaJogo {
       mundo: { w: MUNDO_W, h: MUNDO_H },
       piso: "grama",
       luz: true,
+      salvar: false, // campo de testes não mexe no salvamento da história
     };
   }
 

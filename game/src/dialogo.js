@@ -125,7 +125,7 @@ export class Dialogo {
     this.i = -1;
     this.aoTerminar = aoTerminar;
     const cena = this.cena;
-    cena.tweens.add({ targets: [this.faixaCima, this.faixaBaixo], scaleY: 1, duration: 450, ease: "Sine.easeOut" });
+    if (!this.faixasFixas) cena.tweens.add({ targets: [this.faixaCima, this.faixaBaixo], scaleY: 1, duration: 450, ease: "Sine.easeOut" });
     this.proxima();
   }
 
@@ -149,8 +149,13 @@ export class Dialogo {
     }
     this.i++;
     if (this.i >= this.falas.length) return this.fechar();
-    if (!Array.isArray(this.falas[this.i])) return this.mostrarEscolha(this.falas[this.i]);
+    if (!Array.isArray(this.falas[this.i])) {
+      this.antesDaEscolha?.(this.falas[this.i]);
+      return this.mostrarEscolha(this.falas[this.i]);
+    }
     const [quem, texto] = this.falas[this.i];
+    // cutscene: corta pro plano de quem fala e troca a expressão antes do bilhete aparecer
+    this.antesDaFala?.(quem, this.falas[this.i]);
     const f = FALANTES[quem];
     const ator = this.atores[quem];
 
@@ -169,9 +174,18 @@ export class Dialogo {
     desenharPapel(g, w, h, this.rnd);
     g.setPosition(-w / 2, -h / 2);
     txt.setText("");
-    const c = cena.add.container(ator.x, ator.y - 250, [g, txt]);
+    // âncora "tela" (cutscene): o bilhete fica fixo na tela, logo acima da cabeça; senão, no mundo do jogo
+    const tela = !!ator.tela;
+    const c = cena.add.container(ator.x, tela ? ator.y - h / 2 - 26 : ator.y - 250, [g, txt]);
     c.setDepth(8e6).setAngle(this.rnd.realInRange(-2.5, 2.5)).setScale(0.85).setAlpha(0);
     c.dono = ator;
+    c.larg = w;
+    c.alt = h;
+    if (tela) {
+      [c, g, txt].forEach((o) => o.setScrollFactor(0));
+      c.tela = true;
+      this.prender(c);
+    }
     this.txt = txt;
     this.bilhete = c;
     cena.tweens.add({ targets: c, scale: 1, alpha: 1, duration: 180, ease: "Back.easeOut" });
@@ -198,11 +212,20 @@ export class Dialogo {
     this.txt.setText(this.linhas.join("\n"));
   }
 
+  // bilhete na tela: inteiro dentro dela e abaixo da faixa de cinema
+  prender(c) {
+    const W = this.cena.scale.width;
+    const H = this.cena.scale.height;
+    c.x = Phaser.Math.Clamp(c.x, c.larg / 2 + 24, W - c.larg / 2 - 24);
+    c.y = Phaser.Math.Clamp(c.y, c.alt / 2 + 126, H - c.alt / 2 - 126);
+  }
+
   update() {
     if (!this.ativo || !this.bilhete) return;
     // bilhete acompanha quem fala (acima da cabeça)
     const dono = this.bilhete.dono;
     this.bilhete.x += (dono.x - this.bilhete.x) * 0.2;
+    if (this.bilhete.tela) this.prender(this.bilhete);
     if (!this.revelando) return;
     const n = Math.floor(((this.cena.time.now - this.t0) / 1000) * LETRAS_POR_SEG);
     if (n === this.mostradas) return;
@@ -269,6 +292,7 @@ export class Dialogo {
       this.cena.tweens.add({ targets: c, alpha: 0, y: c.y + (k === i ? -30 : 30), duration: 200, onComplete: () => c.destroy() });
     });
     const op = i >= 0 ? item.opcoes[i] : null;
+    this.aoEscolher?.(op);
     registrarEscolha(item.id, op ? i : "silencio");
     if (op && op.flag) marcar(op.flag);
     if (!op && item.flagSilencio) marcar(item.flagSilencio);
@@ -284,7 +308,7 @@ export class Dialogo {
 
   fechar() {
     const cena = this.cena;
-    cena.tweens.add({ targets: [this.faixaCima, this.faixaBaixo], scaleY: 0, duration: 350, ease: "Sine.easeIn" });
+    if (!this.faixasFixas) cena.tweens.add({ targets: [this.faixaCima, this.faixaBaixo], scaleY: 0, duration: 350, ease: "Sine.easeIn" });
     this.ativo = false;
     const fim = this.aoTerminar;
     this.aoTerminar = null;

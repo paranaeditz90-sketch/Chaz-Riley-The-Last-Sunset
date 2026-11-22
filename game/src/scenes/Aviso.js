@@ -16,6 +16,7 @@ export default class Aviso extends Phaser.Scene {
   }
 
   create() {
+    this.saindo = false;
     const W = this.scale.width;
     const H = this.scale.height;
     this.cameras.main.setBackgroundColor("#000000");

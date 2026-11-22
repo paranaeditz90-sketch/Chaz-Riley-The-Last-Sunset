@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { irPara, tocarAmbiente, tocarMusica } from "../base.js";
-import { estado, marcar } from "../estado.js";
+import { estado, marcarMeta } from "../estado.js";
 import { criarTexturas } from "../luz.js";
 
 // Abertura fria: um pedaço de vídeo de celular, de noite, no trigal. Depois, o título e "Seis horas antes."
@@ -81,10 +81,11 @@ export default class Abertura extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, MW, MH);
     this.t0 = this.time.now;
     this.cortou = false;
+    this.saindo = false;
     this.proxPasso = 0;
     this.proxPalha = 0;
 
-    if (estado.flags.viu_abertura) {
+    if (estado.meta.viu_abertura) {
       const pular = () => this.irTitulo();
       this.input.once("pointerdown", pular);
       this.input.keyboard.once("keydown", pular);
@@ -141,7 +142,7 @@ export default class Abertura extends Phaser.Scene {
       this.children.list.filter((o) => o !== this.flash).forEach((o) => o.setVisible(false));
       this.flash.setFillStyle(0x000000).setAlpha(1);
     });
-    marcar("viu_abertura");
+    marcarMeta("viu_abertura");
     this.time.delayedCall(1800, () => this.irTitulo());
   }
 

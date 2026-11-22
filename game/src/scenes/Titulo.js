@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { irPara, tocarAmbiente, tocarMusica } from "../base.js";
+import { continuar, novoJogo, temSalvamento } from "../estado.js";
 
 // Tela de título: o pôr do sol do morro, os três sentados de costas olhando o horizonte (como no fim do
 // primeiro vídeo do Bruce), linhas de transmissão e trigo balançando.
@@ -10,6 +11,8 @@ export default class Titulo extends Phaser.Scene {
   }
 
   create() {
+    this.saindo = false; // a cena é reaproveitada ao voltar pro título
+    this.confirmandoNovo = false;
     this.desenhar();
     this.scale.on("resize", this.redesenhar, this);
     this.events.once("shutdown", () => this.scale.off("resize", this.redesenhar, this));
@@ -17,10 +20,13 @@ export default class Titulo extends Phaser.Scene {
     tocarAmbiente(this, "vento_loop", 0.16, 2500);
     this.cameras.main.fadeIn(900, 0, 0, 0);
 
+    // Enter/E: ação principal (continuar se houver jogo salvo); N: novo jogo; T: campo de testes
     const k = this.input.keyboard;
-    k.once("keydown-ENTER", () => this.comecar());
-    k.once("keydown-E", () => this.comecar());
-    k.once("keydown-T", () => this.teste());
+    const principal = () => (temSalvamento() ? this.continuar() : this.comecar());
+    k.on("keydown-ENTER", principal);
+    k.on("keydown-E", principal);
+    k.on("keydown-N", () => this.novo());
+    k.on("keydown-T", () => this.teste());
   }
 
   redesenhar() {
@@ -106,9 +112,17 @@ export default class Titulo extends Phaser.Scene {
       this.tweens.add({ targets: t, alpha: 1, duration: 1200, delay: 1600 });
       return t;
     };
-    const comecar = botao(H * 0.84, "COMEÇAR", 72, () => this.comecar());
-    this.tweens.add({ targets: comecar, scale: 1.06, duration: 900, yoyo: true, repeat: -1, ease: "Sine.easeInOut", delay: 2800 });
-    botao(H * 0.84 + 80, "campo de testes", 40, () => this.teste());
+    let principal;
+    if (temSalvamento()) {
+      principal = botao(H * 0.76, "CONTINUAR", 72, () => this.continuar());
+      // novo jogo apaga as escolhas: pede um segundo toque pra confirmar
+      this.botaoNovo = botao(H * 0.76 + 84, "novo jogo", 44, () => this.novo());
+      botao(H * 0.76 + 150, "campo de testes", 36, () => this.teste());
+    } else {
+      principal = botao(H * 0.84, "COMEÇAR", 72, () => this.comecar());
+      botao(H * 0.84 + 80, "campo de testes", 40, () => this.teste());
+    }
+    this.tweens.add({ targets: principal, scale: 1.06, duration: 900, yoyo: true, repeat: -1, ease: "Sine.easeInOut", delay: 2800 });
     this.add.text(W - 24, H - 18, "Chaz e Riley: personagens de Bruce Bronze", {
       fontFamily: "Trebuchet MS, sans-serif", fontSize: "24px", color: "#c9a9a6",
     }).setOrigin(1, 1);
@@ -117,9 +131,34 @@ export default class Titulo extends Phaser.Scene {
   comecar() {
     if (this.saindo) return;
     this.saindo = true;
+    novoJogo(); // partida nova: escolhas e flags zeradas (o que vale entre partidas, como já ter visto a abertura, fica)
     tocarMusica(this, null, 0, 1200);
     tocarAmbiente(this, null, 0, 1200);
     irPara(this, "Aviso", {}, 1200);
+  }
+
+  novo() {
+    if (this.saindo) return;
+    if (!temSalvamento()) return this.comecar();
+    if (!this.confirmandoNovo) {
+      this.confirmandoNovo = true;
+      this.botaoNovo?.setText("toque de novo: apaga suas escolhas").setColor("#ffb0a0");
+      this.time.delayedCall(4000, () => {
+        this.confirmandoNovo = false;
+        if (this.botaoNovo?.active) this.botaoNovo.setText("novo jogo").setColor("#fff3d6");
+      });
+      return;
+    }
+    this.comecar();
+  }
+
+  continuar() {
+    if (this.saindo) return;
+    this.saindo = true;
+    const cena = continuar();
+    tocarMusica(this, null, 0, 1000);
+    tocarAmbiente(this, null, 0, 1000);
+    irPara(this, cena, {}, 1000);
   }
 
   teste() {
