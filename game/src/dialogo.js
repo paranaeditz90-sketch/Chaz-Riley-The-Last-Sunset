@@ -4,12 +4,16 @@ import { marcar, registrarEscolha } from "./estado.js";
 // Falas no estilo dos vídeos do Bruce: bilhete de papel rasgado, letra de mão na cor de quem fala.
 // A "voz" é o som do bicho (decisão do diretor): cachorro late, gato mia. Nada de fala gravada.
 
-// cor do texto = cor do personagem (Chaz azul do sprite, Riley vermelho, Névoa chumbo), um pouco ajustada pra ler no papel
+// Como no Bruce: a letra é a MESMA pra todos (maiúsculas de pincel) e a COR DA TINTA diz quem fala.
+// Cores medidas nos bilhetes originais (auditoria de cânone): Chaz azul-índigo, Riley vinho, Cavalier tijolo,
+// Andy laranja. Névoa (personagem do diretor): chumbo.
+export const LETRA = "Caveat Brush";
 export const FALANTES = {
-  chaz: { nome: "Chaz", cor: "#1a34e1", fonte: "Patrick Hand", tam: 50, vozes: ["voz_chaz_1", "voz_chaz_2", "voz_chaz_3"], tom: [1.0, 1.12], vol: 0.55 },
-  riley: { nome: "Riley", cor: "#b3122b", fonte: "Permanent Marker", tam: 42, vozes: ["voz_riley_1", "voz_riley_2", "voz_riley_3"], tom: [0.95, 1.06], vol: 0.5 },
-  cavalier: { nome: "Cavalier", cor: "#a4431f", fonte: "Kalam", tam: 46, vozes: ["voz_cavalier_1"], tom: [0.95, 1.08], vol: 0.5 },
-  nevoa: { nome: "Névoa", cor: "#4e3a46", fonte: "Shadows Into Light", tam: 50, vozes: ["voz_nevoa_1", "voz_nevoa_2"], tom: [0.78, 0.88], vol: 0.45 },
+  chaz: { nome: "Chaz", cor: "#2312a6", fonte: LETRA, tam: 54, vozes: ["voz_chaz_1", "voz_chaz_2", "voz_chaz_3"], tom: [1.0, 1.12], vol: 0.55 },
+  riley: { nome: "Riley", cor: "#7d001a", fonte: LETRA, tam: 54, vozes: ["voz_riley_1", "voz_riley_2", "voz_riley_3"], tom: [0.95, 1.06], vol: 0.5 },
+  cavalier: { nome: "Cavalier", cor: "#761b21", fonte: LETRA, tam: 54, vozes: ["voz_cavalier_1"], tom: [0.95, 1.08], vol: 0.5 },
+  andy: { nome: "Andy", cor: "#e2782f", fonte: LETRA, tam: 54, vozes: ["voz_andy_1"], tom: [1.15, 1.3], vol: 0.5 },
+  nevoa: { nome: "Névoa", cor: "#4e3a46", fonte: LETRA, tam: 54, vozes: ["voz_nevoa_1", "voz_nevoa_2"], tom: [0.78, 0.88], vol: 0.45 },
 };
 
 // Conversas curtas do teste (sem spoiler). Chave: "quem_fala>com_quem".
@@ -31,7 +35,7 @@ export const CONVERSAS = {
       id: "teste_orelhas", quem: "riley", tempo: 6,
       opcoes: [
         { texto: "NÃO.", depois: [["chaz", "...TÁ BOM. TÁ BOM."]] },
-        { texto: "...TÁ. PODE OLHAR.", depois: [["chaz", "ELAS MEXEM QUANDO VOCÊ FINGE QUE NÃO LIGA."], ["riley", "CALA A BOCA, CHAZ."]] },
+        { texto: "...TÁ. PODE OLHAR.", depois: [["chaz", "ELAS MEXEM QUANDO VOCÊ FINGE QUE NÃO LIGA."], ["riley", "...ISSO É BESTEIRA."]] },
       ],
       silencio: [["chaz", "...VOU ENTENDER ESSE SILÊNCIO COMO UM SIM."]],
     },

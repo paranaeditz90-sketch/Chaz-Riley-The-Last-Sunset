@@ -54,18 +54,20 @@ Este arquivo explica TUDO que você precisa pra continuar o jogo de onde parou. 
 ## 3. Texto, voz e som
 - **Riley não tem gênero marcado.** Nenhum texto do jogo usa pronome ou adjetivo de gênero pra Riley
   ("Riley tá com medo", nunca "ela/ele", "assustada/o"). Vale pros seus textos ao diretor também.
-- **Falas em bilhete de papel rasgado**, como nos vídeos do Bruce, com a **letra de mão e a cor de cada
-  personagem** (`game/src/dialogo.js`): Chaz = Patrick Hand azul; Riley = Permanent Marker vermelho;
-  Névoa = Shadows Into Light chumbo. Texto em MAIÚSCULAS.
+- **Falas em bilhete de papel rasgado**, como nos vídeos do Bruce: **mesma letra pra todos** (Caveat Brush,
+  maiúsculas de pincel) e a **cor da tinta** identifica quem fala (`game/src/dialogo.js`, cores medidas nos
+  bilhetes originais): Chaz azul-índigo, Riley vinho, Cavalier tijolo, Andy laranja, Névoa chumbo.
 - **Voz = som do bicho**: cachorro late, gato mia (tom varia a cada fala). Nada de voz gravada.
 - Som e música: **só CC0 ou CC BY** com crédito em `game/CREDITOS.md`. Música atual: "Evening" (entardecer) e "Ossuary 1 - A Beginning" (noite),
   Kevin MacLeod, CC BY 4.0. Freesound/Pixabay bloqueiam download automático; Mixkit ficou de fora (licença não confirmada).
 
 ## 4. Cânone do Bruce (confirmado nos vídeos dele, ver `referencias_bruce/README.md`)
-- **Chaz Barkley** ("Take notes, Barkley"), toca numa banda, vive com o celular, alegre.
+- **Chaz**: retriever azul, da banda (instrumento favorito: kalimba), expansivo, carinhoso, brincalhão, atrasado,
+  não sabe dizer não. A cavalier o chama de "Barkley" (sobrenome NÃO confirmado: não escrever "Chaz Barkley").
 - **Riley**: seco, empurra o Chaz ("Not a pillow"), mas agradece escondendo a cara no cachecol ("Thanks").
   Defende um filhote do preconceito: "You shouldn't care what others think" (existe preconceito contra gatos).
-- **Filhote laranja** (fãs chamam de "Andy", não confirmado) e **cavalier vermelha e branca** guitarrista
+- **Andy**: nome OFICIAL; **primo pequeno do Chaz** (o Chaz cuida dele). Filhote laranja, espada de madeira, capa.
+- **Cavalier** branca e vermelha, guitarrista
   (sem nome conhecido; perguntar ao diretor). O diretor aprovou os dois **com papel na história**.
 - Cenário: trigal com linhas de transmissão ao pôr do sol, outono, cachecóis.
 - Não invente nome por cima de personagem do Bruce.

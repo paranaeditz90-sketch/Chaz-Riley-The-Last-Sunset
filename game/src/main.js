@@ -7,7 +7,7 @@ import Teste from "./scenes/Teste.js";
 import Titulo from "./scenes/Titulo.js";
 
 // as letras de mão dos bilhetes precisam estar carregadas antes do primeiro texto
-const FONTES = ["Patrick Hand", "Permanent Marker", "Shadows Into Light", "Kalam"];
+const FONTES = ["Caveat Brush", "Patrick Hand", "Permanent Marker"];
 
 function iniciar() {
   const game = new Phaser.Game({

@@ -18,7 +18,7 @@ import sys
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 G = os.path.join(RAIZ, "game")
 # ordem importa: quem é usado vem antes de quem usa
-ORDEM = ["src/estado.js", "src/dialogo.js", "src/retratos_dados.js", "src/cinema.js", "src/luz.js", "src/base.js",
+ORDEM = ["src/estado.js", "src/dialogo.js", "src/retratos_dados.js", "src/olhos_dados.js", "src/cinema.js", "src/luz.js", "src/base.js",
          "src/scenes/Boot.js", "src/scenes/Titulo.js",
          "src/scenes/Aviso.js", "src/scenes/Abertura.js", "src/scenes/Quarto.js", "src/scenes/Teste.js", "src/main.js"]
 

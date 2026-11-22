@@ -17,12 +17,12 @@
 
 ## 1b. Cânone do Bruce Bronze (o que vem dos vídeos dele)
 
-- **Chaz Barkley** (sobrenome confirmado num balão), da banda, sempre com o celular. **Riley**, seco por fora e leal por dentro.
+- **Chaz**: retriever azul, da banda, expansivo e carinhoso (exagera de propósito). A cavalier o chama de "Barkley" (sobrenome não confirmado). **Riley**: gato rajado vinho, seco por fora e leal por dentro, ansioso com gente, esconde o que sente e fala pelas orelhas.
 - **Riley não tem gênero marcado** (decisão do diretor, como o Bruce deixa em aberto): nenhum texto do jogo usa pronome
   ou adjetivo de gênero pra Riley.
-- Também do Bruce: o **filhote laranja** e a **cavalier guitarrista** (nomes a confirmar). Têm papel na história.
+- Também do Bruce: o **Andy** (nome oficial), **primo pequeno do Chaz**, e a **cavalier guitarrista** (nome oficial desconhecido: não inventar). Têm papel na história.
 - Cenário de cânone: trigal com linhas de transmissão ao pôr do sol, outono, cachecóis, casas de madeira.
-- **Falas em bilhetes de papel rasgado, com a letra na cor de quem fala**, como nos vídeos. Cada personagem tem a sua caligrafia.
+- **Falas em bilhetes de papel rasgado**, como nos vídeos: a **letra é a mesma pra todos** (maiúsculas de pincel, fonte Caveat Brush) e a **cor da tinta** diz quem fala (cores medidas nos bilhetes originais).
 
 ## 2. Pilares
 

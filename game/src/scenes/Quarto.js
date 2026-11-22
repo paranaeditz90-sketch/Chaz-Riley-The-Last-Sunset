@@ -124,7 +124,7 @@ export default class Quarto extends CenaJogo {
     });
     this.interativo({
       id: "guitarra", ...P(1390, 485), raio: 180,
-      acao: umaVez("guitarra", () => this.dizer(pensa("(A GUITARRA NEM É MINHA.)", "(TÁ COMIGO HÁ TRÊS MESES. EM MINHA DEFESA, ELA GOSTA MAIS DE MIM.)")),
+      acao: umaVez("guitarra", () => this.dizer(pensa("(A GUITARRA NEM É MINHA.)", "(TÁ COMIGO FAZ UMA SEMANA. EM MINHA DEFESA, ELA GOSTA MAIS DE MIM.)")),
         pensa("(UM DIA EU DEVOLVO. UM DIA.)")),
     });
     this.interativo({
@@ -225,11 +225,11 @@ export default class Quarto extends CenaJogo {
         id: "guitarra", quem: "chaz", tempo: 8,
         opcoes: [
           { texto: "AMANHÃ. JURO.", flag: "prometeu_guitarra", exp: { chaz: "explicando" },
-            depois: [["cavalier", "VOCÊ DISSE ISSO SEMANA PASSADA."], ["cavalier", "ANOTA AÍ, BARKLEY: AMANHÃ.", null, { chaz: "alegria" }]] },
+            depois: [["cavalier", "VOCÊ DISSE ISSO SEMANA PASSADA."], ["cavalier", "AMANHÃ, BARKLEY. A-MA-NHÃ.", null, { chaz: "alegria" }]] },
           { texto: "TÁ BEM CUIDADA, PROMETO.", flag: "guitarra_cuidada", exp: { chaz: "empolgacao" },
             depois: [["cavalier", "BEM CUIDADA NO SEU QUARTO, NÉ.", null, { chaz: "olhar_de_lado" }], ["cavalier", "O ENSAIO É AMANHÃ. NÃO ATRASA."]] },
         ],
-        silencio: [["cavalier", "TÁ. FINGE QUE NÃO TÁ EM CASA.", null, { chaz: "susto" }], ["cavalier", "ANOTA AÍ, BARKLEY."]],
+        silencio: [["cavalier", "TÁ. FINGE QUE NÃO TÁ EM CASA.", null, { chaz: "susto" }], ["cavalier", "FALOU, BARKLEY."]],
         flagSilencio: "ignorou_cavalier",
       },
     ], { fora });
@@ -256,7 +256,7 @@ export default class Quarto extends CenaJogo {
         flagSilencio: "tom_silencio",
       },
     ]);
-    // o caderno fica aberto na escrivaninha, do lado da janela: se o Chaz não escondeu, a Riley lê um pedaço
+    // o caderno fica aberto na escrivaninha, do lado da janela: se o Chaz não escondeu, Riley lê um pedaço
     if (!estado.flags.escondeu_caderno) {
       marcar("riley_viu_letra");
       await c.falar([["riley", "...'ANTES DO SOL VOLTAR'?", "irritacao"], ["chaz", "LETRA NOVA. NÃO TÁ PRONTA.", "olhar_de_lado"], ["riley", "HM.", "tedio"]]);

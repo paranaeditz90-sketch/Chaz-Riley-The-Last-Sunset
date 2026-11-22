@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { carregar } from "../estado.js";
+import { ATLAS_OLHOS } from "../olhos_dados.js";
 import { ANCORAS } from "../retratos_dados.js";
 
 // Carrega tudo uma vez só (sprites, sons, cenários), cria as animações e as texturas feitas por código.
@@ -36,6 +37,8 @@ export default class Boot extends Phaser.Scene {
     for (const k of CENARIOS) this.load.image(`cenario_${k}`, src("cenarios", k, "png"));
     for (const k of CINEMA) this.load.image(`cine_${k}`, src("cinema", k, "jpg"));
     for (const k of Object.keys(ANCORAS)) this.load.image(`ret_${k}`, src("retratos", k, "png"));
+    // olhos animados (íris em várias direções + pálpebras), um atlas por personagem
+    for (const [n, dados] of Object.entries(ATLAS_OLHOS)) this.load.atlas(`olhos_${n}`, src("retratos", `olhos_${n}`, "png"), dados);
 
     const emb = window.__SPRITES__;
     if (emb) {
@@ -68,6 +71,7 @@ export default class Boot extends Phaser.Scene {
     // arte em alta das cutscenes: suave ao ampliar (o jogo é pixelArt, então o padrão seria serrilhado)
     for (const k of CINEMA) suave(`cine_${k}`);
     for (const k of Object.keys(ANCORAS)) suave(`ret_${k}`);
+    for (const n of Object.keys(ATLAS_OLHOS)) suave(`olhos_${n}`);
     this.texturasDeCodigo();
     this.scene.start("Titulo");
   }

@@ -19,8 +19,9 @@ Só entra no jogo material com licença confirmada. CC0 = domínio público (cr�
 - Vento: Luke.RUSTLTD, "wind1" — opengameart.org/content/wind1, CC0.
 - Grilos: Wolfgang_, "Crickets Ambient Noise - loopable" — opengameart.org/content/crickets-ambient-noise-loopable, CC0.
 
-## Fontes (letra de mão dos bilhetes)
-- Patrick Hand (Chaz), Shadows Into Light (Névoa), Gochi Hand, Kalam: SIL Open Font License 1.1 (Google Fonts).
-- Permanent Marker (Riley): Apache License 2.0 (Google Fonts).
+## Fontes
+- Caveat Brush (letra dos bilhetes de fala, como no original): SIL Open Font License 1.1 (Google Fonts).
+- Patrick Hand (textos de interface): SIL Open Font License 1.1 (Google Fonts).
+- Permanent Marker (título): Apache License 2.0 (Google Fonts).
 
 Fora do jogo por enquanto: Mixkit (a licença não pôde ser lida pra confirmar uso em jogo).

@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { FALANTES } from "./dialogo.js";
+import { OLHOS } from "./olhos_dados.js";
 import { ANCORAS } from "./retratos_dados.js";
 
 // Cutscene "de vídeo": a arte em alta que o diretor mandou (uma imagem por expressão, sem redesenho), fundo com
@@ -24,8 +25,17 @@ export const EXPRESSOES = {
   },
 };
 
-// piscar: só onde a pose de olho fechado encaixa na de olho aberto (medido pelo pé: 96,5% de sobreposição)
-const PISCAR = { chaz_11: { chave: "chaz_12", dx: 6, dy: -1 } };
+// piscar e olhar: remendos de olho gerados da própria arte (tools/olhos_retratos.py): íris em 9 direções e
+// pálpebra em 3 estágios. Piscada = 40% → 75% → fechado → 75% → 40% (≈ 0,2 s, como gente).
+const PISCADA = [[0, 35], [1, 35], [2, 70], [1, 35], [0, 35]];
+// revisado pelo diretor: na Riley a íris andando e a pálpebra a 40% ficam estranhas (o olho dela é meio
+// fechado e a pálpebra corta a íris); no Névoa, olhar pra cima fica estranho. Cada um mexe só o que fica bom.
+const OLHAR_OK = {
+  chaz: null, // todas as direções
+  riley: [], // olhar fixo (tédio é o jeito dela)
+  nevoa: ["esquerda", "direita"],
+};
+const PISCADA_DE = { riley: [[1, 40], [2, 80], [1, 40]] };
 // altura (px do quadro 1920x1080) da pose de pé de referência; as outras poses do personagem usam a mesma escala
 const ALTURA = { chaz: 540, riley: 560, nevoa: 530 };
 const REF = { chaz: "chaz_11", riley: "riley_11", nevoa: "nevoa_11" };
@@ -277,7 +287,7 @@ export class Cinema {
       add(c.add.text(cx - w / 2 + 70, cy - h / 2 + 60, "CONSERVATÓRIO ESTADUAL DE MÚSICA", { fontFamily: serif, fontSize: "40px", color: "#2a2018", fontStyle: "bold" }));
       add(c.add.text(cx - w / 2 + 70, cy - h / 2 + 112, "Departamento de Admissões", { fontFamily: serif, fontSize: "28px", color: "#5a4c3a", fontStyle: "italic" }));
       add(c.add.text(cx - w / 2 + 70, cy - h / 2 + 200,
-        "Prezado Chaz Barkley,\n\nTemos a alegria de informar que você foi aceito\nno Conservatório Estadual de Música.\nAs aulas começam no início do próximo mês.\n\nAtenciosamente,\nCoordenação de Admissões",
+        "Prezado Chaz,\n\nTemos a alegria de informar que você foi aceito\nno Conservatório Estadual de Música.\nAs aulas começam no início do próximo mês.\n\nAtenciosamente,\nCoordenação de Admissões",
         { fontFamily: serif, fontSize: "32px", color: "#2a2018", lineSpacing: 8 }));
     } else if (tipo === "caderno") {
       const w = 920;
@@ -289,7 +299,7 @@ export class Cinema {
       for (let y = cy - h / 2 + 110; y < cy + h / 2 - 20; y += 58) g.lineBetween(cx - w / 2 + 10, y, cx + w / 2 - 10, y);
       g.lineStyle(4, 0xe08a8a);
       g.lineBetween(cx - w / 2 + 110, cy - h / 2 + 10, cx - w / 2 + 110, cy + h / 2 - 10);
-      const mao = { fontFamily: '"Patrick Hand", sans-serif', color: "#1a34e1" };
+      const mao = { fontFamily: '"Caveat Brush", sans-serif', color: "#2312a6" };
       const x = cx - w / 2 + 140;
       let y = cy - h / 2 + 50;
       const linha = (t, tam = 46, extra = {}) => {
@@ -328,8 +338,10 @@ export class Cinema {
     const img = this.imagem(chave, base);
     cont.add(img);
     this.camAtores.add(cont);
-    const at = { nome, cont, img, chave, base, piscarEm: this.cena.time.now + Phaser.Math.Between(1200, 3500) };
+    const t = this.cena.time.now;
+    const at = { nome, cont, img, chave, base, olhar: "natural", piscarEm: t + Phaser.Math.Between(900, 2600), espiarEm: t + Phaser.Math.Between(3500, 7000) };
     this.atores[nome] = at;
+    this.montarOlhos(at);
     // respira e balança de leve, cada um num ritmo
     this.cena.tweens.add({ targets: cont, scaleY: 1.012, scaleX: 0.997, duration: Phaser.Math.Between(1700, 2200), yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
     this.cena.tweens.add({ targets: cont, angle: { from: -0.35, to: 0.35 }, duration: Phaser.Math.Between(2600, 3400), yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
@@ -360,11 +372,78 @@ export class Cinema {
     const nova = this.imagem(chave, at.base).setAlpha(0);
     at.cont.add(nova);
     const velha = at.img;
+    const olhosVelhos = at.olhos || [];
     at.img = nova;
     at.chave = chave;
     nova.setScale(at.base * 1.025, at.base * 0.975);
-    this.cena.tweens.add({ targets: nova, alpha: 1, scaleX: at.base, scaleY: at.base, duration: 160, ease: "Back.easeOut" });
-    this.cena.tweens.add({ targets: velha, alpha: 0, duration: 120, onComplete: () => velha.destroy() });
+    this.montarOlhos(at, 0);
+    const novos = (at.olhos || []).flatMap((o) => [o.iris, o.lid]);
+    novos.forEach((o) => o.setScale(at.base * 1.025, at.base * 0.975));
+    const irises = (at.olhos || []).map((o) => o.iris);
+    this.cena.tweens.add({ targets: [nova, ...irises], alpha: 1, duration: 160 });
+    this.cena.tweens.add({ targets: [nova, ...novos], scaleX: at.base, scaleY: at.base, duration: 160, ease: "Back.easeOut" });
+    const sai = [velha, ...olhosVelhos.flatMap((o) => [o.iris, o.lid])];
+    this.cena.tweens.add({ targets: sai, alpha: 0, duration: 120, onComplete: () => sai.forEach((o) => o.destroy()) });
+  }
+
+  // ---------------------------------------------------------------- olhos (piscar e olhar)
+  montarOlhos(at, alfa = 1) {
+    at.olhos = [];
+    const lista = OLHOS[at.chave];
+    if (!lista || !lista.length) return;
+    const a = ANCORAS[at.chave];
+    const tex = `olhos_${at.nome}`;
+    for (const o of lista) {
+      const x = (o.x - a.cx) * at.base;
+      const y = (o.y - a.pe) * at.base;
+      const iris = this.cena.add.image(x, y, tex, o.olhar[at.olhar] || o.olhar.natural).setOrigin(0).setScale(at.base).setAlpha(alfa).setScrollFactor(0);
+      const lid = this.cena.add.image(x, y, tex, o.palpebra[0]).setOrigin(0).setScale(at.base).setVisible(false).setScrollFactor(0);
+      lid.ehLid = true;
+      at.cont.add([iris, lid]);
+      at.olhos.push({ dados: o, iris, lid });
+    }
+  }
+
+  // direção: natural, centro, esquerda, direita, cima, baixo, cima_esquerda... (esquerda/direita da TELA)
+  olhar(nome, dir = "natural") {
+    const at = this.atores[nome];
+    const ok = OLHAR_OK[nome];
+    if (ok && dir !== "natural" && !ok.includes(dir)) dir = "natural";
+    if (!at || at.olhar === dir) return;
+    at.olhar = dir;
+    for (const o of at.olhos || []) o.iris.setFrame(o.dados.olhar[dir] || o.dados.olhar.natural);
+  }
+
+  piscar(at) {
+    if (!at.olhos || !at.olhos.length || at.piscando) return;
+    at.piscando = true;
+    let t = 0;
+    for (const [estagio, ms] of PISCADA_DE[at.nome] || PISCADA) {
+      this.cena.time.delayedCall(t, () => at.olhos?.forEach((o) => o.lid.active && o.lid.setFrame(o.dados.palpebra[estagio]).setVisible(true)));
+      t += ms;
+    }
+    this.cena.time.delayedCall(t, () => {
+      at.olhos?.forEach((o) => o.lid.active && o.lid.setVisible(false));
+      at.piscando = false;
+    });
+  }
+
+  // quem está em cena olha pra quem fala: falante no quadro = olha pro lado dele; fora do quadro = pro lado de onde vem a voz
+  olharPara(quem, fora) {
+    const falante = this.atores[quem];
+    for (const at of Object.values(this.atores)) {
+      if (at.nome === quem) continue;
+      let dir = "natural";
+      if (falante) dir = falante.cont.x < at.cont.x ? "esquerda" : "direita";
+      else if (fora[quem] === "direita" || fora[quem] === "esquerda") dir = fora[quem];
+      this.olhar(at.nome, dir);
+      at.espiarEm = this.cena.time.now + Phaser.Math.Between(4000, 7000);
+    }
+    // quem fala olha pra quem está ouvindo (se houver alguém no quadro)
+    if (falante) {
+      const outro = Object.values(this.atores).find((a) => a !== falante);
+      this.olhar(quem, outro ? (outro.cont.x < falante.cont.x ? "esquerda" : "direita") : "natural");
+    }
   }
 
   // quem fala dá um pulinho (no ritmo do latido/miado)
@@ -379,19 +458,20 @@ export class Cinema {
     this.aplicarCamera();
     const t = this.cena.time.now;
     for (const at of Object.values(this.atores)) {
-      const pb = PISCAR[at.chave];
-      if (!pb || t < at.piscarEm) continue;
-      at.piscarEm = t + (Math.random() < 0.2 ? 260 : Phaser.Math.Between(2200, 5200));
-      const img = at.img;
-      const volta = at.chave;
-      const a = ANCORAS[pb.chave];
-      img.setTexture(`ret_${pb.chave}`).setOrigin(a.cx / a.w, a.pe / a.h);
-      img.setPosition(pb.dx * at.base, pb.dy * at.base);
-      this.cena.time.delayedCall(110, () => {
-        if (at.img !== img || at.chave !== volta || !img.active) return;
-        const b = ANCORAS[volta];
-        img.setTexture(`ret_${volta}`).setOrigin(b.cx / b.w, b.pe / b.h).setPosition(0, 0);
-      });
+      if (t >= at.piscarEm) {
+        // às vezes pisca duas vezes seguidas, como gente
+        at.piscarEm = t + (Math.random() < 0.15 ? 320 : Phaser.Math.Between(3000, 6000));
+        this.piscar(at);
+      }
+      // sozinho no quadro e ninguém falando de fora: de vez em quando dá uma olhada pro lado e volta
+      if (t >= at.espiarEm) {
+        at.espiarEm = t + Phaser.Math.Between(4500, 8000);
+        if (Object.keys(this.atores).length === 1 && !this.vozDeFora) {
+          const antes = at.olhar;
+          this.olhar(at.nome, Phaser.Utils.Array.GetRandom(["esquerda", "direita", "baixo_esquerda", "baixo_direita"]));
+          this.cena.time.delayedCall(Phaser.Math.Between(700, 1300), () => this.olhar(at.nome, antes));
+        }
+      }
     }
   }
 
@@ -423,6 +503,7 @@ export class Cinema {
 
   // falas no formato do dialogo.js; cada linha pode trazer [quem, texto, expressão de quem fala, { reações dos outros }]
   falar(falas, { fora = {} } = {}) {
+    this.fora = fora;
     const atores = {};
     for (const quem of Object.keys(FALANTES)) atores[quem] = this.ancoraDe(quem, fora);
     return new Promise((ok) => this.cena.dialogo.iniciar(falas, atores, ok));
@@ -435,6 +516,11 @@ export class Cinema {
     }
     if (linha && linha[2]) this.expressao(quem, linha[2]);
     if (linha && linha[3]) Object.entries(linha[3]).forEach(([n, e]) => this.expressao(n, e));
-    if (linha) this.falou(quem);
+    const fora = this.fora || {};
+    this.vozDeFora = !this.atores[quem] && !!fora[quem];
+    if (linha) {
+      this.olharPara(quem, fora);
+      this.falou(quem);
+    }
   }
 }
