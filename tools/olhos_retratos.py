@@ -103,19 +103,31 @@ def remendos(nome, chave, an):
         base = im[y0:y1, x0:x1].copy()
         abc = ab[y0:y1, x0:x1]
         irc = ir[y0:y1, x0:x1]
+        # íris inteira = íris + o contorno escuro em volta dela (o que não é esclera, perto da íris, dentro do olho).
+        # Sem o contorno, ao mexer a íris sobrava um anel fantasma no lugar antigo.
+        cbase = base[..., :3].astype(int)
+        escl_px = np.abs(cbase - o["cor_escl"][None, None, :]).sum(-1) < 70
+        perto = ndimage.binary_dilation(irc, iterations=5) & abc
+        irc = ndimage.binary_fill_holes(irc | (perto & ~escl_px)) & abc
         # olho sem íris (esclera no lugar): apaga com 2 px de folga pra não sobrar fiozinho da borda suavizada
         sem = base.copy()
         apagar = ndimage.binary_dilation(irc, iterations=2) & abc
         sem[apagar, :3] = o["cor_escl"]
-        irc = ndimage.binary_dilation(irc, iterations=1) & abc
         iy, ix = np.nonzero(irc)
         icx, icy = ix.mean(), iy.mean()
         rx = (ix.max() - ix.min() + 1) / 2
         ry = (iy.max() - iy.min() + 1) / 2
         ay, ax = np.nonzero(abc)
         ocx = (ax.min() + ax.max()) / 2
-        livre_x = max(0.0, (ax.max() - ax.min() + 1) / 2 - rx * 0.55)
-        livre_y = max(0.0, ((ay.max() - ay.min() + 1) / 2 - ry * 0.6) * 0.6)
+        # curso curto (55%): no olho grandão a íris ia até a borda e era cortada
+        livre_x = max(0.0, (ax.max() - ax.min() + 1) / 2 - rx * 1.05) * 0.55
+        livre_y = max(0.0, (ay.max() - ay.min() + 1) / 2 - ry * 1.05) * 0.5
+        # íris cortada pela pálpebra (encosta no topo ou no fundo do olho): só mexe pros lados
+        topo_ab = {c: np.nonzero(abc[:, c])[0].min() for c in np.unique(ix)}
+        fundo_ab = {c: np.nonzero(abc[:, c])[0].max() for c in np.unique(ix)}
+        encosta = any(iy[ix == c].min() <= topo_ab[c] + 2 or iy[ix == c].max() >= fundo_ab[c] - 2 for c in np.unique(ix))
+        if encosta:
+            livre_y = 0.0
         move = irc.sum() / max(1, abc.sum()) >= 0.2  # íris quase escondida (choro, sono pesado): não mexe
         pix = base[irc].copy()
         # tira pontinho preto (pupila quase preta) de dentro da íris: vira a cor da própria íris
@@ -132,6 +144,14 @@ def remendos(nome, chave, an):
             else:
                 dx = int(round(ocx + d[0] * livre_x - icx))
                 dy = int(round(d[1] * livre_y))
+                # recua até a íris caber (no máximo 15% dela pra fora do olho)
+                for _ in range(12):
+                    ty, tx = iy + dy, ix + dx
+                    ok = (ty >= 0) & (ty < abc.shape[0]) & (tx >= 0) & (tx < abc.shape[1])
+                    fora = 1 - (abc[ty[ok], tx[ok]].sum() / max(1, len(iy)))
+                    if fora <= 0.15:
+                        break
+                    dx, dy = int(dx * 0.8), int(dy * 0.8)
             if dx == 0 and dy == 0:
                 # íris no lugar original: o desenho original, só sem o pontinho preto
                 img = base.copy()
