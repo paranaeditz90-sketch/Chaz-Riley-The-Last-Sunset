@@ -147,7 +147,7 @@ export default class Trigal extends CenaJogo {
         let atras = pc;
         for (const n of ["riley", "nevoa"]) {
           const c = this.porNome(n);
-          this.seguir(c, atras, 150, dt);
+          this.seguir(c, atras, 200, dt);
           atras = c;
         }
       }

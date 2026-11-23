@@ -9,7 +9,7 @@ import { estado, marcar, marcarMeta } from "../estado.js";
 //   A "Três"     : o resto (luz ligada, ou ninguém trancou)
 // O Chaz sobrevive sempre no capítulo 1. Última imagem de todos os finais: a janela da casa do Chaz.
 
-const NOITE_FINAL = 0x5a6290;
+const NOITE_FINAL = 0x7880b0;
 const QUENTE_FINAL = 0xe0c098;
 
 export function qualFinal(f) {
@@ -60,7 +60,7 @@ export default class Final extends CenaJogo {
       c.entrar("chaz", null, { x: 0.28 });
       c.entrar("nevoa", null, { x: 0.52 });
       c.entrar("riley", null, { x: 0.76 });
-      c.tingir(f.luz_varanda ? QUENTE_FINAL : NOITE_FINAL);
+      c.tingir(f.luz_varanda ? QUENTE_FINAL : NOITE_FINAL, f.luz_varanda ? null : 0xa8b4f0);
       c.camera({ z: 1.0, fx: 0.5, fy: 0.55 });
       c.camera({ z: 1.06, ms: 16000 });
     }, { fade: 1200 });
@@ -68,8 +68,8 @@ export default class Final extends CenaJogo {
     await c.falar([
       ["chaz", "...TÁ TODO MUNDO AQUI. TÁ TODO MUNDO AQUI.", "tristeza"],
       ...(f.seguiu_nevoa
-        ? [["riley", "VOCÊ LEVOU A ÚNICA LUZ, CHAZ.", "raiva"], ["chaz", "EU PERDI ELE NO TRIGO. DESCULPA. DESCULPA.", "tristeza"]]
-        : [["riley", "VOCÊ SUMIU, CHAZ. EU VIREI E VOCÊ TINHA SUMIDO.", "raiva"], ["chaz", "EU NÃO SUMI. EU TAVA DO SEU LADO.", "susto"]]),
+        ? [["riley", "VOCÊ LEVOU A ÚNICA LUZ, CHAZ.", "irritacao"], ["chaz", "EU PERDI ELE NO TRIGO. DESCULPA. DESCULPA.", "tristeza"]]
+        : [["riley", "VOCÊ SUMIU, CHAZ. EU VIREI E VOCÊ TINHA SUMIDO.", "irritacao"], ["chaz", "EU NÃO SUMI. EU TAVA DO SEU LADO.", "curiosidade"]]),
       ["nevoa", "...O SEU AMOS TÁ NO QUARTO.", "choro"],
       ["nevoa", "NÃO ENTRA LÁ.", "encolhido"],
       ...(f.riley_guardou_bilhete ? [["riley", "(o bilhete pesa no bolso. Ainda não.)", "defensiva"]] : []),
@@ -102,7 +102,7 @@ export default class Final extends CenaJogo {
     await c.abrir(() => {
       c.fundo("cine_cozinha");
       c.entrar("nevoa", "encolhido", { x: 0.5, escala: 1.1 });
-      c.tingir(0x7078a4);
+      c.tingir(0x8890c0, 0xa8b4f0);
       c.camera({ z: 1.05, fx: 0.5, fy: 0.6 });
       c.camera({ z: 1.15, ms: 14000 });
     }, { fade: 1200 });
@@ -131,11 +131,11 @@ export default class Final extends CenaJogo {
       c.fundo("cine_cozinha");
       c.entrar("chaz", "tristeza", { x: 0.3 });
       c.entrar("nevoa", "choro", { x: 0.66 });
-      c.tingir(0x7078a4);
+      c.tingir(0x8890c0, 0xa8b4f0);
       c.camera({ z: 1.0, fx: 0.5, fy: 0.55 });
     });
     await c.falar([
-      ["chaz", "NÉVOA! A PORTA DOS FUNDOS TAVA... CADÊ A RILEY?", "susto"],
+      ["chaz", "NÉVOA! A PORTA DOS FUNDOS TAVA... CADÊ A RILEY?", "tristeza"],
       ["nevoa", "...LÁ FORA.", "choro"],
     ]);
     this.som("porta_abre", 0.5, 0.9);
@@ -170,7 +170,7 @@ export default class Final extends CenaJogo {
       c.entrar("chaz", null, { x: 0.28 });
       c.entrar("nevoa", null, { x: 0.52 });
       c.entrar("riley", null, { x: 0.76 });
-      c.tingir(0x8a90b4);
+      c.tingir(0x8a90b4, 0xa8b4f0);
       c.camera({ z: 1.0, fx: 0.5, fy: 0.55 });
       c.camera({ z: 1.06, ms: 16000 });
     }, { fade: 1200 });
@@ -178,7 +178,7 @@ export default class Final extends CenaJogo {
     await c.falar([
       ["chaz", "EU TE PERDI NO TRIGO, NÉVOA. EU CORRI ATRÁS E VOCÊ TINHA SUMIDO.", "tristeza"],
       ["nevoa", "...EU ACORDEI LÁ DENTRO. NA COZINHA.", "nervoso"],
-      ["riley", "COMO ASSIM, ACORDOU?", "irritacao"],
+      ["riley", "COMO ASSIM, ACORDOU?", "defensiva"],
       ["nevoa", "...O SEU AMOS—", "choro"],
       ["chaz", "...A BATERIA. NÃO, NÃO, NÃO. UM POR CENTO.", "susto"],
     ]);
@@ -193,7 +193,7 @@ export default class Final extends CenaJogo {
     this.som("papel_1", 0.4, 1.6);
     c.corte(() => {
       c.fundo("cine_fazenda_noite");
-      c.entrar("chaz", "susto", { x: 0.3 });
+      c.entrar("chaz", "tristeza", { x: 0.3 });
       c.entrar("riley", "tristeza", { x: 0.72 });
       c.tingir(QUENTE_FINAL);
       c.camera({ z: 1.08, fx: 0.5, fy: 0.55 });
@@ -299,7 +299,7 @@ export class Fluxo extends Phaser.Scene {
         g.lineStyle(3, escolhido ? 0xffe2a0 : 0x5a5468);
         g.fillCircle(x, y, 26);
         g.strokeCircle(x, y, 26);
-        this.add.text(x, y + 34, visto ? op : "???", { fontFamily: fonte, fontSize: "25px", color: escolhido ? "#ffe2a0" : visto ? "#9a92a8" : "#4a4656", align: "center", wordWrap: { width: passo - 6 } }).setOrigin(0.5, 0);
+        this.add.text(x, y + 34, visto ? op : "???", { fontFamily: fonte, fontSize: "25px", color: escolhido ? "#ffe2a0" : visto ? "#b4acc2" : "#6a6676", align: "center", wordWrap: { width: passo - 6 } }).setOrigin(0.5, 0);
         if (escolhido) {
           if (antes) {
             g.lineStyle(5, 0xe8b04a, 0.8);

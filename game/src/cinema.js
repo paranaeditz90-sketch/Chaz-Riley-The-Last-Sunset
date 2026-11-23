@@ -272,7 +272,7 @@ export class Cinema {
     const c = this.cena;
     const L = this.camFrente;
     const cx = this.W / 2;
-    const cy = this.H * 0.45;
+    let cy = this.H * 0.45;
     const add = (o) => {
       o.setScrollFactor(0);
       L.add(o);
@@ -346,14 +346,15 @@ export class Cinema {
     } else if (tipo === "celular") {
       // o celular do Chaz: notificação de vídeo salvo ou o vídeo (tela preta) tocando
       const w = 380;
-      const h = 700;
+      const h = 640;
+      cy = this.H * 0.5; // mais pra baixo: com o zoom da câmera o topo entrava embaixo da faixa de cinema
       papel(w, h);
       add(c.add.rectangle(cx, cy, w, h, 0x111016).setStrokeStyle(10, 0x2b2a33));
       add(c.add.rectangle(cx, cy, w - 40, h - 90, opcoes.tela === "video" ? 0x000000 : 0x1c2440));
       const fonte = "Trebuchet MS, Verdana, sans-serif";
       add(c.add.text(cx, cy - h / 2 + 70, "19:47", { fontFamily: fonte, fontSize: "40px", color: "#e8e8f0" }).setOrigin(0.5));
       if (opcoes.tela === "video") {
-        add(c.add.text(cx, cy - 40, opcoes.audio || "", { fontFamily: '"Patrick Hand", sans-serif', fontSize: "38px", color: "#6d6a7a", align: "center" }).setOrigin(0.5));
+        add(c.add.text(cx, cy - 40, opcoes.audio || "", { fontFamily: '"Patrick Hand", sans-serif', fontSize: "42px", color: "#b4b0c4", align: "center", wordWrap: { width: w - 70 } }).setOrigin(0.5));
         const barra = add(c.add.rectangle(cx - w / 2 + 50, cy + h / 2 - 110, 0, 8, 0xd0d0e0).setOrigin(0, 0.5));
         add(c.add.rectangle(cx - w / 2 + 50, cy + h / 2 - 110, w - 100, 8, 0x3a3a48).setOrigin(0, 0.5)).setDepth(-1);
         const tempo = add(c.add.text(cx + w / 2 - 50, cy + h / 2 - 80, "0:00 / 0:47", { fontFamily: fonte, fontSize: "26px", color: "#a0a0b4" }).setOrigin(1, 0));
@@ -367,19 +368,37 @@ export class Cinema {
         L.bringToTop(barra);
       } else {
         const caixa = add(c.add.rectangle(cx, cy - h / 2 + 200, w - 80, 120, 0xf0f0f6, 0.95).setStrokeStyle(2, 0xffffff));
-        add(c.add.text(cx - w / 2 + 64, caixa.y - 36, "GALERIA", { fontFamily: fonte, fontSize: "22px", color: "#55556a" }));
-        add(c.add.text(cx - w / 2 + 64, caixa.y - 6, opcoes.aviso || "Novo vídeo salvo — 0:47", { fontFamily: fonte, fontSize: "28px", color: "#16161e" }));
+        add(c.add.text(cx - w / 2 + 56, caixa.y - 36, "GALERIA", { fontFamily: fonte, fontSize: "22px", color: "#55556a" }));
+        add(c.add.text(cx - w / 2 + 56, caixa.y - 6, opcoes.aviso || "Novo vídeo salvo — 0:47", { fontFamily: fonte, fontSize: "24px", color: "#16161e" }));
       }
     }
     return L;
   }
 
   // escurece (ou esquenta) quem está em cena: personagens no breu ficam azulados, na luz da lanterna voltam
-  tingir(cor = 0xffffff) {
+  // No breu ganham um contorno de luz fria (crítica de animação D-03: o Névoa, chumbo, sumia no escuro).
+  tingir(cor = 0xffffff, contorno = null) {
     for (const at of Object.values(this.atores)) {
       const alvos = [at.img, ...(at.olhos || []).flatMap((o) => [o.iris, o.lid])];
       alvos.forEach((o) => (cor === 0xffffff ? o.clearTint() : o.setTint(cor)));
       at.tinta = cor;
+      at.aro = contorno;
+      this.aro(at);
+    }
+  }
+
+  // contorno de luz: 4 cópias da silhueta, pintadas de uma cor só, deslocadas pra fora, atrás do desenho
+  aro(at) {
+    (at.aroImgs || []).forEach((o) => o.destroy());
+    at.aroImgs = [];
+    if (!at.aro) return;
+    const d = 4;
+    for (const [dx, dy] of [[-d, 0], [d, 0], [0, -d], [0, d]]) {
+      const o = this.imagem(at.chave, at.base).setTintFill(at.aro).setAlpha(0.5);
+      o.x = dx;
+      o.y = dy;
+      at.cont.addAt(o, 0);
+      at.aroImgs.push(o);
     }
   }
 
@@ -455,6 +474,7 @@ export class Cinema {
     this.cena.tweens.add({ targets: [nova, ...novos], scaleX: at.base, scaleY: at.base, duration: 160, ease: "Back.easeOut" });
     const sai = [velha, ...olhosVelhos.flatMap((o) => [o.iris, o.lid])];
     this.cena.tweens.add({ targets: sai, alpha: 0, duration: poseGrande ? 200 : 120, onComplete: () => sai.forEach((o) => o.destroy()) });
+    if (at.aro) this.cena.time.delayedCall(130, () => this.atores[at.nome] === at && this.aro(at));
     this.tremerOlhos(at);
   }
 
@@ -572,8 +592,8 @@ export class Cinema {
         const at = self.atores[quem];
         if (at) return self.camAtores.x + at.cont.x * self.camAtores.scaleX;
         // voz de fora do quadro: bilhete colado na borda (bem longe de quem está em cena)
-        if (lado === "direita") return self.W - 210;
-        if (lado === "esquerda") return 210;
+        if (lado === "direita") return self.W - 280;
+        if (lado === "esquerda") return 280;
         return self.W / 2;
       },
       get y() {

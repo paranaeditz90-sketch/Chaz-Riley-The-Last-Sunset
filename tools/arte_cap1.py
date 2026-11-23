@@ -197,42 +197,72 @@ def com_contorno(dr, tipo, pts, cor, t, s):
         dr.rectangle((x0 * s, y0 * s, x1 * s, y1 * s), fill=cor)
 
 
-def espantalho(w=220, h=360):
-    """O espantalho: estaca em cruz, casaco puído caído, saco de estopa na cabeça SEM rosto (só uma costura torta
-    onde seria a boca), chapéu de palha mole, palha saindo das mangas e da gola. Cores apagadas (desbotado)."""
+def espantalho(w=300, h=480):
+    """O espantalho (revisto pela crítica de animação: o primeiro era simétrico e fofo).
+    Alto e torto: estaca inclinada, cabeça tombada pro lado, ombros caídos. Juta encardida, casaco cor de lama.
+    Olhos = dois furos pretos desiguais, com um pontinho de brilho frio (o contrário dos olhos grandes dos
+    personagens). Boca costurada comprida e torta. Palha escorrendo das mangas como dedos compridos.
+    Margem larga no desenho: nada de palha cortada na borda."""
     def f(dr, s):
-        t = 5
-        madeira = (92, 70, 52, 255)
-        com_contorno(dr, "ret", (w * 0.47, h * 0.2, w * 0.53, h * 0.99), madeira, t, s)  # estaca
-        com_contorno(dr, "ret", (w * 0.08, h * 0.36, w * 0.92, h * 0.41), madeira, t, s)  # travessa
-        palha = (196, 160, 86, 255)
-        for lado in (-1, 1):  # palha saindo das mangas, caída
-            bx = w * 0.5 + lado * w * 0.42
-            for k in range(6):
-                dr.line((bx * s, h * 0.42 * s, (bx + lado * (6 + k * 3)) * s, (h * 0.5 + k * 5) * s), fill=PRETO, width=int(7 * s))
-            for k in range(6):
-                dr.line((bx * s, h * 0.42 * s, (bx + lado * (6 + k * 3)) * s, (h * 0.5 + k * 5) * s), fill=palha, width=int(3 * s))
-        casaco = (70, 76, 84, 255)
-        com_contorno(dr, "poli", [(w * 0.12, h * 0.36), (w * 0.88, h * 0.36), (w * 0.8, h * 0.46), (w * 0.72, h * 0.8),
-                                   (w * 0.6, h * 0.76), (w * 0.5, h * 0.82), (w * 0.38, h * 0.76), (w * 0.28, h * 0.8), (w * 0.2, h * 0.46)], casaco, t, s)
-        dr.line((w * 0.5 * s, h * 0.38 * s, w * 0.5 * s, h * 0.78 * s), fill=PRETO, width=int(3 * s))  # abertura do casaco
-        for k, (x, y) in enumerate([(0.36, 0.52), (0.62, 0.6), (0.44, 0.68)]):  # remendos
-            dr.rectangle(((w * x - 9) * s, (h * y - 7) * s, (w * x + 9) * s, (h * y + 7) * s), fill=(92, 84, 78, 255), outline=PRETO, width=int(2 * s))
-        estopa = (170, 146, 110, 255)
-        com_contorno(dr, "elipse", (w * 0.31, h * 0.13, w * 0.69, h * 0.39), estopa, t, s)  # cabeça: saco
-        for k in range(5):  # palha na gola
-            x = w * (0.36 + k * 0.07)
-            dr.line((x * s, h * 0.37 * s, (x + (k - 2) * 4) * s, h * 0.44 * s), fill=palha, width=int(3 * s))
-        dr.line((w * 0.32 * s, h * 0.33 * s, w * 0.68 * s, h * 0.35 * s), fill=PRETO, width=int(3 * s))  # amarração do saco
-        # sem olhos. Só uma costura torta onde seria a boca (é pior do que um rosto)
-        pts = [(w * (0.41 + i * 0.03), h * (0.27 + (0.006 if i % 2 else -0.006) + i * 0.002)) for i in range(7)]
-        dr.line([(x * s, y * s) for x, y in pts], fill=PRETO, width=int(3 * s))
+        t = 6
+        madeira = (64, 50, 40, 255)
+        # estaca inclinada (torta)
+        com_contorno(dr, "poli", [(w * 0.50, h * 0.22), (w * 0.555, h * 0.22), (w * 0.53, h * 0.995), (w * 0.475, h * 0.995)], madeira, t, s)
+        # travessa caída pra direita
+        com_contorno(dr, "poli", [(w * 0.10, h * 0.33), (w * 0.92, h * 0.38), (w * 0.92, h * 0.41), (w * 0.10, h * 0.36)], madeira, t, s)
+        palha = (150, 124, 70, 255)
+        palha_esc = (104, 84, 48, 255)
+        # palha escorrendo das mangas: fios compridos, caídos, como dedos
+        for lado, bx, by in ((-1, w * 0.13, h * 0.37), (1, w * 0.88, h * 0.42)):
+            for k in range(7):
+                comp = h * (0.10 + 0.035 * (k % 4))
+                x1 = bx + lado * (k - 3) * 4
+                pts = [(bx * s, by * s), ((bx + x1) / 2 * s + lado * 6 * s, (by + comp * 0.5) * s), (x1 * s, (by + comp) * s)]
+                dr.line(pts, fill=PRETO, width=int(7 * s), joint="curve")
+                dr.line(pts, fill=palha if k % 2 else palha_esc, width=int(3 * s), joint="curve")
+        # casaco cor de lama, comprido e rasgado embaixo, ombros caídos
+        casaco = (62, 56, 48, 255)
+        com_contorno(dr, "poli", [(w * 0.14, h * 0.34), (w * 0.88, h * 0.39), (w * 0.80, h * 0.47), (w * 0.74, h * 0.86), (w * 0.66, h * 0.80),
+                                   (w * 0.58, h * 0.88), (w * 0.50, h * 0.81), (w * 0.42, h * 0.89), (w * 0.34, h * 0.82), (w * 0.27, h * 0.85),
+                                   (w * 0.24, h * 0.45)], casaco, t, s)
+        dr.line((w * 0.52 * s, h * 0.38 * s, w * 0.50 * s, h * 0.82 * s), fill=PRETO, width=int(3 * s))
+        for x, y in ((0.35, 0.55), (0.64, 0.64), (0.42, 0.72)):  # remendos escuros
+            dr.polygon([((w * x - 11) * s, (h * y - 8) * s), ((w * x + 12) * s, (h * y - 6) * s), ((w * x + 10) * s, (h * y + 9) * s), ((w * x - 9) * s, (h * y + 7) * s)],
+                       fill=(44, 40, 36, 255), outline=PRETO, width=int(2 * s))
+        for k in range(6):  # palha saindo da gola
+            x = w * (0.40 + k * 0.045)
+            dr.line((x * s, h * 0.36 * s, (x + (k - 2.5) * 5) * s, h * 0.45 * s), fill=palha_esc, width=int(3 * s))
+        # cabeça: desenhada à parte e tombada ~16 graus
+        cab = Image.new("RGBA", (int(w * 0.62 * s), int(h * 0.36 * s)), (0, 0, 0, 0))
+        dc = ImageDraw.Draw(cab)
+        cw, ch = cab.width / s, cab.height / s
+        juta = (118, 104, 82, 255)
+        com_contorno(dc, "elipse", (cw * 0.18, ch * 0.30, cw * 0.82, ch * 0.98), juta, t, s)
+        for k in range(5):  # fiapos/manchas da juta encardida
+            yk = ch * (0.45 + k * 0.1)
+            dc.line((cw * 0.24 * s, yk * s, cw * 0.76 * s, (yk + 2) * s), fill=(98, 86, 68, 255), width=int(2 * s))
+        # olhos: furos pretos desiguais, com pontinho de brilho frio
+        for ex, ey, r in ((0.38, 0.56, 0.075), (0.62, 0.53, 0.06)):
+            dc.ellipse(((cw * ex - cw * r) * s, (ch * ey - cw * r * 1.15) * s, (cw * ex + cw * r) * s, (ch * ey + cw * r * 1.15) * s), fill=(6, 4, 8, 255))
+            dc.ellipse(((cw * ex - 2) * s, (ch * ey - 3) * s, (cw * ex + 1) * s, (ch * ey) * s), fill=(190, 210, 235, 255))
+        # boca costurada comprida e torta
+        pts = [(cw * (0.30 + i * 0.07), ch * (0.78 + (0.02 if i % 2 else -0.015) + i * 0.006)) for i in range(7)]
+        dc.line([(x * s, y * s) for x, y in pts], fill=PRETO, width=int(3 * s))
         for x, y in pts[1:-1]:
-            dr.line((x * s, (y - 6) * s, x * s, (y + 6) * s), fill=PRETO, width=int(2 * s))
-        chapeu = (150, 120, 64, 255)
-        com_contorno(dr, "elipse", (w * 0.16, h * 0.13, w * 0.84, h * 0.2), chapeu, t, s)  # aba
-        com_contorno(dr, "poli", [(w * 0.34, h * 0.16), (w * 0.38, h * 0.04), (w * 0.62, h * 0.03), (w * 0.67, h * 0.16)], chapeu, t, s)
-    return desenho(w, h, f)
+            dc.line((x * s, (y - 7) * s, (x + 1) * s, (y + 7) * s), fill=PRETO, width=int(3 * s))
+        # chapéu escuro e mole, aba rasgada caída de um lado
+        chapeu = (58, 46, 34, 255)
+        com_contorno(dc, "poli", [(cw * 0.04, ch * 0.36), (cw * 0.50, ch * 0.28), (cw * 0.96, ch * 0.30), (cw * 0.90, ch * 0.42),
+                                   (cw * 0.62, ch * 0.38), (cw * 0.30, ch * 0.42), (cw * 0.10, ch * 0.50)], chapeu, t, s)
+        com_contorno(dc, "poli", [(cw * 0.30, ch * 0.33), (cw * 0.36, ch * 0.06), (cw * 0.60, ch * 0.02), (cw * 0.70, ch * 0.31)], chapeu, t, s)
+        cab = cab.rotate(-16, resample=Image.BICUBIC, expand=False)
+        return cab
+
+    im = Image.new("RGBA", (w * S, h * S), (0, 0, 0, 0))
+    dr = ImageDraw.Draw(im)
+    cab = f(dr, S)
+    im.alpha_composite(cab, (int(w * 0.22 * S), int(h * 0.02 * S)))
+    return im.resize((w, h), Image.LANCZOS)
 
 
 def fardo(w=200, h=130):
@@ -273,13 +303,28 @@ def casa_fazenda(w=900, h=620):
     return desenho(w, h, f)
 
 
-def gerador(w=170, h=130):
+def gerador(w=230, h=170):
+    """gerador a gasolina de fazenda: armação de cano, tanque vermelho em cima, motor cinza, rodinhas,
+    escapamento e o puxador da cordinha (o primeiro parecia um rádio)"""
     def f(dr, s):
-        com_contorno(dr, "ret", (12, 30, w - 12, h - 14), (150, 60, 40, 255), 5, s)
-        com_contorno(dr, "ret", (30, 46, w - 60, h - 40), (60, 60, 64, 255), 4, s)
-        com_contorno(dr, "elipse", (w - 48, 50, w - 22, 76), (200, 190, 160, 255), 4, s)
-        dr.line((24 * s, 30 * s, 40 * s, 8 * s), fill=PRETO, width=int(6 * s))
-        dr.line((40 * s, 8 * s, w * 0.6 * s, 8 * s), fill=PRETO, width=int(6 * s))
+        t = 5
+        cano = (40, 40, 44, 255)
+        com_contorno(dr, "ret", (20, 40, w - 20, 48), cano, 3, s)  # armação
+        com_contorno(dr, "ret", (20, 40, 28, h - 34), cano, 3, s)
+        com_contorno(dr, "ret", (w - 28, 40, w - 20, h - 34), cano, 3, s)
+        com_contorno(dr, "ret", (20, h - 42, w - 20, h - 34), cano, 3, s)
+        com_contorno(dr, "ret", (40, 14, w - 60, 46), (170, 44, 34, 255), t, s)  # tanque
+        com_contorno(dr, "elipse", (w - 92, 4, w - 72, 20), (60, 60, 64, 255), 3, s)  # tampa
+        com_contorno(dr, "ret", (44, 60, w * 0.58, h - 46), (92, 94, 100, 255), t, s)  # motor
+        for i in range(4):  # aletas
+            dr.line((52 * s, (70 + i * 12) * s, (w * 0.58 - 8) * s, (70 + i * 12) * s), fill=PRETO, width=int(2 * s))
+        com_contorno(dr, "elipse", (w * 0.62, 62, w * 0.62 + 46, 108), (70, 70, 76, 255), t, s)  # alternador
+        com_contorno(dr, "ret", (w - 70, 104, w - 34, 118), (30, 30, 32, 255), 3, s)  # escapamento
+        dr.line(((w * 0.58 + 4) * s, 80 * s, (w * 0.58 + 22) * s, 70 * s), fill=PRETO, width=int(4 * s))  # cordinha
+        com_contorno(dr, "ret", (w * 0.58 + 20, 64, w * 0.58 + 34, 72), (200, 170, 60, 255), 2, s)
+        for x in (52, w - 60):  # rodinhas
+            com_contorno(dr, "elipse", (x - 16, h - 40, x + 16, h - 8), (28, 28, 30, 255), 4, s)
+            dr.ellipse(((x - 5) * s, (h - 29) * s, (x + 5) * s, (h - 19) * s), fill=(120, 120, 126, 255))
     return desenho(w, h, f)
 
 

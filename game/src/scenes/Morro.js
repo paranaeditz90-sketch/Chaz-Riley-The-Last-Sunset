@@ -7,7 +7,7 @@ import { estado } from "../estado.js";
 // Na última nota o sol não desce: APAGA. Linhas de transmissão faíscam até o horizonte, a cidade apaga.
 // Tudo em cutscene (o morro ainda não tem cenário jogável).
 
-const NOITE_MORRO = 0x4c5478; // tinta de quem está no breu (só a lanterna do celular)
+const NOITE_MORRO = 0x6f78a8; // tinta de quem está no breu (só a lanterna do celular)
 
 export default class Morro extends CenaJogo {
   constructor() {
@@ -105,7 +105,7 @@ export default class Morro extends CenaJogo {
     c.entrar("chaz", null, { x: 0.3, escala: 0.98 });
     c.entrar("riley", null, { x: 0.52, escala: 0.98 });
     c.entrar("nevoa", null, { x: 0.76, escala: 0.98 });
-    if (noite) c.tingir(NOITE_MORRO);
+    if (noite) c.tingir(NOITE_MORRO, 0xa8b4f0);
   }
 
   // faísca: estalo de luz branca-azulada num ponto do fio
@@ -262,15 +262,29 @@ export default class Morro extends CenaJogo {
       ["nevoa", "...A RUA INTEIRA APAGOU.", "nervoso"],
     ]);
     // a lanterna acende: quem está em cena volta a ter cor (um pouco)
-    c.tingir(0x8a90b4);
+    c.tingir(0x8a90b4, 0xa8b4f0);
     await c.esperar(600);
     // lá embaixo, no trigal: um espantalho que não estava lá
     c.corte(() => {
       c.fundo("cine_morro_noite");
-      const e = this.add.image(c.px(0.62), c.H * 0.86, "espantalho").setOrigin(0.5, 1).setScale(0.6).setTint(0x6a6e88).setScrollFactor(0);
-      c.camFundo.add(e);
-      const luz = this.add.image(c.px(0.62), c.H * 0.8, "cine_brilho").setScale(9).setTint(0xdfe6ff).setAlpha(0.16).setBlendMode(Phaser.BlendModes.ADD).setScrollFactor(0);
-      c.camFundo.add(luz);
+      // sem halo (crítica D: halo deixava "bonitinho"): só a silhueta contra o céu um pouco menos escuro,
+      // metade escondida no trigo, com um fio frio de luz da lanterna na borda
+      const x = c.px(0.62);
+      const y = c.H * 0.9;
+      const aro = this.add.image(x + 3, y - 2, "espantalho").setOrigin(0.5, 1).setScale(0.95).setTintFill(0x9aa6d8).setAlpha(0.35).setScrollFactor(0);
+      const e = this.add.image(x, y, "espantalho").setOrigin(0.5, 1).setScale(0.95).setTint(0x4a4c62).setScrollFactor(0);
+      c.camFundo.add([aro, e]);
+      // trigo escuro na frente (esconde as pernas da estaca)
+      const g = this.add.graphics().setScrollFactor(0);
+      const rnd = new Phaser.Math.RandomDataGenerator(["trigo-frente"]);
+      for (let i = 0; i < 140; i++) {
+        const tx = x + rnd.between(-420, 420);
+        const ty = y + rnd.between(-10, 60);
+        const th = rnd.between(90, 170);
+        g.lineStyle(5, rnd.pick([0x0e0c14, 0x15121c, 0x1b1724]));
+        g.lineBetween(tx, ty, tx + rnd.between(-10, 10), ty - th);
+      }
+      c.camFundo.add(g);
       c.camera({ z: 1.0, fx: 0.6, fy: 0.75 });
       c.camera({ z: 1.35, ms: 5000, ease: "Cubic.easeIn" });
     });
@@ -281,7 +295,7 @@ export default class Morro extends CenaJogo {
     ], { fora: { nevoa: "direita", riley: "esquerda" } });
     c.corte(() => {
       this.plano(c, true);
-      c.tingir(0x8a90b4);
+      c.tingir(0x8a90b4, 0xa8b4f0);
       c.camera({ z: 1.05, fx: 0.5, fy: 0.55 });
     });
     await c.falar([

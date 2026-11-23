@@ -6,7 +6,7 @@ import { estado } from "../estado.js";
 // sem lembrar de ter chegado. A porta da frente aberta. No quarto, o seu Amos (silhueta, mancha, reação; sem gore).
 // Escolha E: trancar a porta (com os outros lá fora) ou ligar o gerador (a luz da varanda; barulhento).
 
-const LUAR_COZINHA = 0x7078a4;
+const LUAR_COZINHA = 0x8890c0;
 
 export default class Cozinha extends CenaJogo {
   constructor() {
@@ -42,7 +42,7 @@ export default class Cozinha extends CenaJogo {
     await c.abrir(() => {
       c.fundo("cine_cozinha");
       c.entrar("nevoa", null, { x: 0.5, y: 0.99, escala: 1.15 });
-      c.tingir(LUAR_COZINHA);
+      c.tingir(LUAR_COZINHA, 0xa8b4f0);
       c.camera({ z: 1.2, fx: 0.5, fy: 0.75 });
       c.camera({ z: 1.08, fy: 0.62, ms: 6000 });
     }, { fade: 1400 });
@@ -68,7 +68,7 @@ export default class Cozinha extends CenaJogo {
     c.corte(() => {
       c.fundo("cine_quarto_amos");
       c.entrar("nevoa", "costas", { x: 0.16, y: 1.08, escala: 1.3 });
-      c.tingir(LUAR_COZINHA);
+      c.tingir(LUAR_COZINHA, 0xa8b4f0);
       c.camera({ z: 1.0, fx: 0.5, fy: 0.55 });
       c.camera({ z: 1.18, fx: 0.42, fy: 0.6, ms: 9000, ease: "Sine.easeIn" });
     });
@@ -79,7 +79,7 @@ export default class Cozinha extends CenaJogo {
     c.corte(() => {
       c.fundo("cine_cozinha");
       c.entrar("nevoa", "susto", { x: 0.5, escala: 1.25 });
-      c.tingir(LUAR_COZINHA);
+      c.tingir(LUAR_COZINHA, 0xa8b4f0);
       c.camera({ z: 1.1, fx: 0.5, fy: 0.45 });
     });
     await c.falar([
@@ -96,7 +96,7 @@ export default class Cozinha extends CenaJogo {
     c.expressao("nevoa", "nervoso");
     await c.falar([
       ["nevoa", "(tem alguma coisa no terreiro.)", "nervoso"],
-      ["nevoa", "(...os outros ainda tão lá fora.)", "encolhido"],
+      ["nevoa", "(...os outros ainda tão lá fora.)", "nervoso"],
       {
         id: "porta_luz", quem: "nevoa", tempo: 10,
         opcoes: [
