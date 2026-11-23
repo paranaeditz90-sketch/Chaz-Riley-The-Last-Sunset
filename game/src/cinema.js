@@ -372,6 +372,15 @@ export class Cinema {
     if (!at) return;
     const chave = EXPRESSOES[nome][exp];
     if (chave === at.chave) return;
+    // troca de pose (deitado -> de pé, de pé -> encolhido): o corpo muda de altura. Em vez de "pular" de um
+    // desenho pro outro, o personagem afunda um pouco e sobe na pose nova (crítica de animação: r19 -> r20)
+    const aV = ANCORAS[at.chave];
+    const aN = ANCORAS[chave];
+    const poseGrande = Math.abs(aN.pe - aN.topo - (aV.pe - aV.topo)) / (aV.pe - aV.topo) > 0.18;
+    if (poseGrande) {
+      const c = at.cont;
+      this.cena.tweens.add({ targets: c, y: c.y + 10, duration: 90, yoyo: true, ease: "Sine.easeOut" });
+    }
     const nova = this.imagem(chave, at.base).setAlpha(0);
     at.cont.add(nova);
     const velha = at.img;
@@ -386,7 +395,21 @@ export class Cinema {
     this.cena.tweens.add({ targets: [nova, ...irises], alpha: 1, duration: 160 });
     this.cena.tweens.add({ targets: [nova, ...novos], scaleX: at.base, scaleY: at.base, duration: 160, ease: "Back.easeOut" });
     const sai = [velha, ...olhosVelhos.flatMap((o) => [o.iris, o.lid])];
-    this.cena.tweens.add({ targets: sai, alpha: 0, duration: 120, onComplete: () => sai.forEach((o) => o.destroy()) });
+    this.cena.tweens.add({ targets: sai, alpha: 0, duration: poseGrande ? 200 : 120, onComplete: () => sai.forEach((o) => o.destroy()) });
+    this.tremerOlhos(at);
+  }
+
+  // susto: o olho treme (íris 1 px pra cada lado, rápido) por ~0,6 s quando a expressão entra
+  tremerOlhos(at) {
+    if (!at.olhos?.some((o) => o.dados.olhar.tremor_e)) return;
+    const quadros = ["tremor_e", "tremor_d"];
+    for (let i = 0; i < 12; i++) {
+      this.cena.time.delayedCall(60 + i * 48, () => {
+        if (this.atores[at.nome] !== at) return;
+        at.olhos?.forEach((o) => o.iris.active && o.iris.setFrame(o.dados.olhar[quadros[i % 2]]));
+      });
+    }
+    this.cena.time.delayedCall(60 + 12 * 48, () => at.olhos?.forEach((o) => o.iris.active && o.iris.setFrame(o.dados.olhar[at.olhar] || o.dados.olhar.natural)));
   }
 
   // ---------------------------------------------------------------- olhos (piscar e olhar)

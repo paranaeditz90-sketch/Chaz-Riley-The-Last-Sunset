@@ -45,6 +45,10 @@ PERFIL = {"nevoa_16"}  # vista de lado: um olho só é o certo
 # expressões em que a íris não anda (crítica de animação, seção 2):
 #   tudo: a expressão É a direção do olhar (curiosidade, olhar de lado) ou o olho é pequeno/de perfil
 #   susto (chaz_23) e tristeza (chaz_31): olhar fixo; a íris pequena de anel grosso andando deixava resto do anel
+# susto: pupila encolhida (fração do tamanho original) em vez de apagada
+PUPILA_SUSTO = {"nevoa_32": 0.6}
+# susto: olho tremendo (íris 1 px pra cada lado, alternando rápido; o jogo toca quando a expressão entra)
+TREMOR = {"nevoa_32", "chaz_23"}
 TRAVA = {"chaz_13": "tudo", "chaz_33": "tudo", "nevoa_12": "tudo", "nevoa_16": "tudo", "chaz_23": "tudo", "chaz_31": "tudo"}
 
 
@@ -199,9 +203,28 @@ def remendos(nome, chave, an):
                 if not (m_e & borda_iris).any():
                     pupila |= m_e
             if pupila.any():
+                nucleo_p = pupila.copy()
+                cor_pup = np.median(cbase[nucleo_p], 0)
                 # 2 px de folga: a borda suavizada da pupila não pode sobrar como um "0" oco
                 pupila = ndimage.binary_dilation(pupila, iterations=2) & irc & ~ndimage.binary_dilation(borda_iris, iterations=1)
                 limpo[pupila, :3] = cor_iris
+                # susto: a pupila volta, ENCOLHIDA (pesquisa de expressão de desenho: no choque a pupila vira um
+                # pontinho/fenda fina dentro do olho arregalado). Desenhada lisa, no centro da pupila original.
+                if chave in PUPILA_SUSTO:
+                    py_, px_ = np.nonzero(nucleo_p)
+                    pcx, pcy = px_.mean(), py_.mean()
+                    prx = max(1.2, (px_.max() - px_.min() + 1) / 2 * PUPILA_SUSTO[chave])
+                    pry = max(2.0, (py_.max() - py_.min() + 1) / 2 * PUPILA_SUSTO[chave])
+                    yy_, xx_ = np.mgrid[0:irc.shape[0], 0:irc.shape[1]]
+                    cob = np.zeros(irc.shape)
+                    for sy_ in range(4):
+                        for sx_ in range(4):
+                            X = xx_ + (sx_ + 0.5) / 4 - 0.5 - pcx
+                            Y = yy_ + (sy_ + 0.5) / 4 - 0.5 - pcy
+                            cob += (X / prx) ** 2 + (Y / pry) ** 2 <= 1
+                    cob = (cob / 16) * irc
+                    m = cob > 0
+                    limpo[m, :3] = (cor_pup[None, :] * cob[m, None] + limpo[m, :3] * (1 - cob[m, None])).round()
         # Névoa: olho amendoado, íris encostando nas duas pálpebras e esclera sombreada; mexendo a íris o remendo
         # aparecia (crítica A-03/A-06). O desenho dele já olha de lado/pra baixo (e ele quase não encara): fixo.
         trava = "tudo" if nome == "nevoa" else TRAVA.get(chave)
@@ -287,8 +310,24 @@ def remendos(nome, chave, an):
                 escondida = alvo & okq & ~da_iris & (mtop[qx] >= 0) & (qy < mtop[qx] + 1)
                 c = (cob / 16) * escondida
                 m = c > 0
-                img[m, :3] = (cor_miolo[None, :] * c[m, None] + img[m, :3].astype(float) * (1 - c[m, None])).round()
+                # cor da parte escondida = a da íris logo abaixo, na mesma coluna (2 px pra dentro, longe da
+                # borda suavizada); cor única chapada fazia uma costura clara dentro da íris (crítica B-01)
+                cor_col = np.tile(cor_miolo.astype(float), (miolo.shape[1], 1))
+                for cc in np.nonzero(da_iris.any(0))[0]:
+                    rr = np.nonzero(da_iris[:, cc])[0]
+                    r_ = min(rr.min() + 2, rr.max())
+                    cor_col[cc] = img[r_, cc, :3]
+                cor_m = cor_col[np.nonzero(m)[1]]
+                img[m, :3] = (cor_m * c[m, None] + img[m, :3].astype(float) * (1 - c[m, None])).round()
             olhar[nomeo] = img.astype(np.uint8)
+        if chave in TREMOR:
+            for nomet, dxt in (("tremor_e", -1), ("tremor_d", 1)):
+                img = sem.copy()
+                alvo_t = miolo | faixa
+                ty_, tx_ = iy, np.clip(ix + dxt, 0, irc.shape[1] - 1)
+                ok_t = alvo_t[ty_, tx_]
+                img[ty_[ok_t], tx_[ok_t]] = limpo[iy[ok_t], ix[ok_t]]
+                olhar[nomet] = img.astype(np.uint8)
         # pálpebras: pele descendo do contorno de cima até a curva de baixo
         cols = np.arange(abc.shape[1])
         topo = np.full(len(cols), -1)

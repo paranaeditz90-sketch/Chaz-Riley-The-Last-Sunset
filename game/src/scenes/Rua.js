@@ -55,7 +55,7 @@ export default class Rua extends CenaJogo {
           id: "bolso", quem: "chaz", tempo: 7,
           opcoes: [
             { texto: "NADA. PALHETA.", flag: "mentiu_bolso", exp: { chaz: "olhar_de_lado" }, depois: [["riley", "...TÁ.", "suspiro"]] },
-            { texto: "DEPOIS EU TE MOSTRO.", flag: "chaz_quase_contou", exp: { chaz: "tristeza" },
+            { texto: "DEPOIS EU TE MOSTRO.", flag: "chaz_quase_contou", exp: { chaz: "olhar_de_lado" },
               depois: [["riley", "VOCÊ VIVE DIZENDO 'DEPOIS'.", "tedio"], ["chaz", "E SEMPRE CUMPRO! ÀS VEZES.", "alegria"]] },
           ],
           silencio: [["riley", "TÁ BOM. GUARDA SEU SEGREDINHO.", "defensiva"]],
@@ -89,7 +89,7 @@ export default class Rua extends CenaJogo {
     await c.falar([
       ["chaz", "ELE TÁ... DORMINDO?", "curiosidade"],
       ["tobias", "TÁ. FINALMENTE.", null, { chaz: "susto", riley: "irritacao" }],
-      ["tobias", "TRÊS DIAS."],
+      ["tobias", "TRÊS DIAS.", null, { chaz: "tristeza" }],
       ["chaz", "TRÊS DIAS SEM DORMIR, VÔ TOBIAS?", "tristeza"],
       ["tobias", "ACORDA ELE DEVAGAR, MENINO. ELE ACORDA ASSUSTADO."],
       {
@@ -110,11 +110,12 @@ export default class Rua extends CenaJogo {
       ["nevoa", "...!", "susto", { chaz: "susto" }],
       ["nevoa", "EU... TAVA... ONDE...?", "nervoso"],
       ["chaz", "NA SUA VARANDA. TUDO BEM?", "curiosidade"],
-      ["nevoa", "...TUDO. SÓ... SONHO RUIM.", "pensativo"],
+      ["nevoa", "...TUDO. SÓ... SONHO RUIM.", "encolhido"],
       ["tobias", "TÁ COM CHEIRO DE PALHA DE NOVO, MENINO.", null, { nevoa: "nervoso" }],
-      ["nevoa", "...DEVE SER DO MORRO.", "nervoso"],
+      ["nevoa", "...DEVE SER DO MORRO.", "nervoso", { chaz: "curiosidade" }],
       ["riley", "A GENTE NEM FOI PRO MORRO AINDA.", "irritacao"],
-      ["nevoa", "...EU FUI ONTEM.", "desconfianca"],
+      // o Névoa fala sem encarar ninguém (olhar pra baixo), como a Riley reclamou lá atrás
+      ["nevoa", "...EU FUI ONTEM.", "sono", { riley: "irritacao" }],
       ["chaz", "BORA! O SOL NÃO ESPERA NINGUÉM.", "aceno", { nevoa: "sono" }],
       ["riley", "ESSA FALA É MINHA.", "tedio"],
     ], fora);
