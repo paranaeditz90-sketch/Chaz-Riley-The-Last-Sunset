@@ -16,7 +16,7 @@ export const AUDIO = [
 ];
 export const CENARIOS = ["quarto"];
 // fundos das cutscenes (desfoque de lente sobre o cenário)
-export const CINEMA = ["quarto", "ceu_tarde"];
+export const CINEMA = ["quarto", "ceu_tarde", "rua_tarde", "varanda"];
 
 export default class Boot extends Phaser.Scene {
   constructor() {

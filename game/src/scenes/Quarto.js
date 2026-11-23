@@ -284,12 +284,6 @@ export default class Quarto extends CenaJogo {
     marcar("prologo_quarto_feito");
     tocarMusica(this, null, 0, 900);
     this.cameras.main.fadeOut(900, 0, 0, 0);
-    this.cameras.main.once("camerafadeoutcomplete", () => this.scene.start("Cartela", {
-      textos: [
-        { texto: "Continua...", fonte: "Patrick Hand", tam: 72, ms: 2400 },
-        { texto: "A cidade ainda está sendo construída.", fonte: "Patrick Hand", tam: 44, ms: 2600, cor: "#b9ad9c" },
-      ],
-      depois: "Titulo",
-    }));
+    this.cameras.main.once("camerafadeoutcomplete", () => this.scene.start("Rua"));
   }
 }

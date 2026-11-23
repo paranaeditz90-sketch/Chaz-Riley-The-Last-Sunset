@@ -28,12 +28,15 @@ export const EXPRESSOES = {
 // piscar e olhar: remendos de olho gerados da própria arte (tools/olhos_retratos.py): íris em 9 direções e
 // pálpebra em 3 estágios. Piscada = 40% → 75% → fechado → 75% → 40% (≈ 0,2 s, como gente).
 const PISCADA = [[0, 35], [1, 35], [2, 70], [1, 35], [0, 35]];
-// revisado pelo diretor: na Riley a íris andando e a pálpebra a 40% ficam estranhas (o olho dela é meio
-// fechado e a pálpebra corta a íris); no Névoa, olhar pra cima fica estranho. Cada um mexe só o que fica bom.
+// revisado pelo diretor e pela crítica de animação: na Riley a íris andando e a pálpebra a 40% ficam
+// estranhas (o olho dela é meio fechado e a pálpebra corta a íris); no Névoa a íris andando mostrava o
+// remendo (olho amendoado, esclera sombreada) e o desenho dele já olha de lado. Os dois só piscam.
+// No Chaz, as expressões em que a íris não pode andar (susto, tristeza, curiosidade, olhar de lado) já
+// vêm travadas do gerador (tools/olhos_retratos.py, TRAVA).
 const OLHAR_OK = {
   chaz: null, // todas as direções
   riley: [], // olhar fixo (tédio é o jeito dela)
-  nevoa: ["esquerda", "direita"],
+  nevoa: [], // olhar fixo, desviado (quase nunca encara)
 };
 const PISCADA_DE = { riley: [[1, 40], [2, 80], [1, 40]] };
 // altura (px do quadro 1920x1080) da pose de pé de referência; as outras poses do personagem usam a mesma escala
@@ -485,8 +488,9 @@ export class Cinema {
       get x() {
         const at = self.atores[quem];
         if (at) return self.camAtores.x + at.cont.x * self.camAtores.scaleX;
-        if (lado === "direita") return self.W - 300;
-        if (lado === "esquerda") return 300;
+        // voz de fora do quadro: bilhete colado na borda (bem longe de quem está em cena)
+        if (lado === "direita") return self.W - 210;
+        if (lado === "esquerda") return 210;
         return self.W / 2;
       },
       get y() {
@@ -496,7 +500,7 @@ export class Cinema {
           const topo = at.cont.y - (a.pe - a.topo) * at.base;
           return self.camAtores.y + topo * self.camAtores.scaleY;
         }
-        return lado ? self.H * 0.5 : self.H * 0.86;
+        return lado ? self.H * 0.42 : self.H * 0.86;
       },
     };
   }

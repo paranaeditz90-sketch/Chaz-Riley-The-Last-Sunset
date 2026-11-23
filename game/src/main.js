@@ -3,6 +3,7 @@ import Abertura, { Cartela } from "./scenes/Abertura.js";
 import Aviso from "./scenes/Aviso.js";
 import Boot from "./scenes/Boot.js";
 import Quarto from "./scenes/Quarto.js";
+import Rua from "./scenes/Rua.js";
 import Teste from "./scenes/Teste.js";
 import Titulo from "./scenes/Titulo.js";
 
@@ -18,7 +19,7 @@ function iniciar() {
     // EXPAND: altura fixa 1080 e a largura acompanha a tela (celular 20:9 sem faixa preta dos lados)
     scale: { mode: Phaser.Scale.EXPAND, autoCenter: Phaser.Scale.CENTER_BOTH, width: 1920, height: 1080 },
     input: { activePointers: 3 },
-    scene: [Boot, Titulo, Aviso, Abertura, Cartela, Quarto, Teste],
+    scene: [Boot, Titulo, Aviso, Abertura, Cartela, Quarto, Rua, Teste],
   });
   window.__game = game; // usado nos testes automáticos
 }

@@ -13,6 +13,7 @@ export const FALANTES = {
   riley: { nome: "Riley", cor: "#7d001a", fonte: LETRA, tam: 54, vozes: ["voz_riley_1", "voz_riley_2", "voz_riley_3"], tom: [0.95, 1.06], vol: 0.5 },
   cavalier: { nome: "Cavalier", cor: "#761b21", fonte: LETRA, tam: 54, vozes: ["voz_cavalier_1"], tom: [0.95, 1.08], vol: 0.5 },
   andy: { nome: "Andy", cor: "#e2782f", fonte: LETRA, tam: 54, vozes: ["voz_andy_1"], tom: [1.15, 1.3], vol: 0.5 },
+  tobias: { nome: "Vô Tobias", cor: "#6b5844", fonte: LETRA, tam: 54, vozes: ["voz_nevoa_1"], tom: [0.6, 0.68], vol: 0.45 },
   nevoa: { nome: "Névoa", cor: "#4e3a46", fonte: LETRA, tam: 54, vozes: ["voz_nevoa_1", "voz_nevoa_2"], tom: [0.78, 0.88], vol: 0.45 },
 };
 
