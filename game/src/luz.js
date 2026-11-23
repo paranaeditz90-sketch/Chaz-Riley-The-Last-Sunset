@@ -119,15 +119,23 @@ export class Luz {
     const tremor = 1 + Math.sin(cena.time.now / 90) * 0.004 + Math.sin(cena.time.now / 37) * 0.003;
     this.rt.clear();
     this.rt.fill(0x05040b, 0.965);
-    this.halo.setPosition(sx, sy + 40).setScale(tremor);
-    this.cone.setPosition(sx, sy).setRotation(this.angulo).setScale(tremor);
-    this.rt.erase(this.halo);
-    this.rt.erase(this.cone);
+    if (this.isqueiro) {
+      // isqueiro (a Riley): sem facho, só uma chama pequena que treme. Elétrico nenhum funciona depois do apagão;
+      // fogo funciona.
+      const chama = 0.78 + Math.sin(cena.time.now / 70) * 0.03 + Math.sin(cena.time.now / 23) * 0.02 + (Math.random() - 0.5) * 0.02;
+      this.halo.setPosition(sx, sy + 20).setScale(chama);
+      this.rt.erase(this.halo);
+    } else {
+      this.halo.setPosition(sx, sy + 40).setScale(tremor);
+      this.cone.setPosition(sx, sy).setRotation(this.angulo).setScale(tremor);
+      this.rt.erase(this.halo);
+      this.rt.erase(this.cone);
+    }
 
     // contorno fraco em quem está perto no escuro
     for (const c of this.chars) {
       const d = Phaser.Math.Distance.Between(ox, oy, c.s.x, c.s.y - 70);
-      const mostra = c !== ativo && d < 520 && !this.iluminado(c, ox, oy);
+      const mostra = c !== ativo && c.s.visible && d < 520 && !this.iluminado(c, ox, oy);
       c.contorno.setVisible(mostra);
       if (mostra) {
         c.contorno.setFrame(c.s.frame.name).setPosition(c.s.x, c.s.y).setAlpha(0.22 * (1 - d / 520) + 0.05);
@@ -135,11 +143,14 @@ export class Luz {
     }
   }
 
+  // alvo: personagem ({s}) ou qualquer coisa com x/y (o pé)
   iluminado(c, ox, oy) {
-    const dx = c.s.x - ox;
-    const dy = c.s.y - 70 - oy;
+    const p = c.s || c;
+    const dx = p.x - ox;
+    const dy = p.y - 70 - oy;
     const d = Math.hypot(dx, dy);
-    if (d < HALO_R * 0.85) return true;
+    if (d < HALO_R * (this.isqueiro ? 0.66 : 0.85)) return true;
+    if (this.isqueiro) return false;
     const ang = Math.abs(Phaser.Math.RadToDeg(Phaser.Math.Angle.Wrap(Math.atan2(dy, dx) - this.angulo)));
     return d < CONE_COMP * 0.95 && ang < CONE_MEIO_ANG;
   }
@@ -147,12 +158,16 @@ export class Luz {
   sombra(c, ativo, ox, oy) {
     const s = c.sombra;
     s.setFrame(c.s.frame.name).setPosition(c.s.x, c.s.y).setDepth(c.s.depth - 0.5);
+    if (!c.s.visible) {
+      s.setVisible(false);
+      return;
+    }
     if (!this.noite) {
       // sol baixo a oeste: sombra comprida pro leste, deitada no chão
       s.setVisible(true).setAngle(90).setScale(0.62, 1.05).setAlpha(0.2);
       return;
     }
-    if (c === ativo || !this.iluminado(c, ox, oy)) {
+    if (c === ativo || !c.s.visible || !this.iluminado(c, ox, oy)) {
       s.setVisible(false);
       return;
     }

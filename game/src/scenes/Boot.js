@@ -16,7 +16,10 @@ export const AUDIO = [
 ];
 export const CENARIOS = ["quarto"];
 // fundos das cutscenes (desfoque de lente sobre o cenário)
-export const CINEMA = ["quarto", "ceu_tarde", "rua_tarde", "varanda"];
+export const CINEMA = ["quarto", "ceu_tarde", "rua_tarde", "varanda", "morro_tarde", "morro_noite", "cozinha", "quarto_amos",
+  "fazenda_noite", "fazenda_luz", "janela_andy"];
+// objetos do capítulo 1 (feitos por código: tools/arte_cap1.py), carregados com o próprio nome
+export const OBJETOS = ["espantalho", "fardo", "casa_fazenda", "gerador"];
 
 export default class Boot extends Phaser.Scene {
   constructor() {
@@ -35,6 +38,7 @@ export default class Boot extends Phaser.Scene {
     const img = window.__IMAGENS__;
     const src = (pasta, nome, ext) => (img ? img[`${pasta}/${nome}`] : `assets/${pasta}/${nome}.${ext}`);
     for (const k of CENARIOS) this.load.image(`cenario_${k}`, src("cenarios", k, "png"));
+    for (const k of OBJETOS) this.load.image(k, src("cenarios", k, "png"));
     for (const k of CINEMA) this.load.image(`cine_${k}`, src("cinema", k, "jpg"));
     for (const k of Object.keys(ANCORAS)) this.load.image(`ret_${k}`, src("retratos", k, "png"));
     // olhos animados (íris em várias direções + pálpebras), um atlas por personagem
@@ -70,6 +74,7 @@ export default class Boot extends Phaser.Scene {
     for (const k of CENARIOS) suave(`cenario_${k}`);
     // arte em alta das cutscenes: suave ao ampliar (o jogo é pixelArt, então o padrão seria serrilhado)
     for (const k of CINEMA) suave(`cine_${k}`);
+    for (const k of OBJETOS) suave(k);
     for (const k of Object.keys(ANCORAS)) suave(`ret_${k}`);
     for (const n of Object.keys(ATLAS_OLHOS)) suave(`olhos_${n}`);
     this.texturasDeCodigo();

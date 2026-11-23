@@ -125,13 +125,6 @@ export default class Rua extends CenaJogo {
   }
 
   fim() {
-    tocarMusica(this, null, 0, 900);
-    this.scene.start("Cartela", {
-      textos: [
-        { texto: "Continua...", fonte: "Patrick Hand", tam: 72, ms: 2400 },
-        { texto: "O morro ainda está sendo construído.", fonte: "Patrick Hand", tam: 44, ms: 2600, cor: "#b9ad9c" },
-      ],
-      depois: "Titulo",
-    });
+    this.scene.start("Morro");
   }
 }

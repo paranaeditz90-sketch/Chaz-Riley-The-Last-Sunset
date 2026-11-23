@@ -15,7 +15,7 @@ export const EXPRESSOES = {
   },
   riley: {
     tedio: "riley_11", irritacao: "riley_12", suspiro: "riley_13", raiva: "riley_21", mao_na_cara: "riley_22",
-    tristeza: "riley_23", desanimo: "riley_31", choro: "riley_32", defensiva: "riley_33",
+    tristeza: "riley_23", desanimo: "riley_31", constrangimento: "riley_31", choro: "riley_32", defensiva: "riley_33",
   },
   nevoa: {
     sono: "nevoa_11", desconfianca: "nevoa_12", suspiro: "nevoa_13", surpresa: "nevoa_14", costas: "nevoa_15",
@@ -268,7 +268,7 @@ export class Cinema {
   }
 
   // close de objeto: papel com texto (carta, caderno). Desenhado por código, fiel ao cenário do quarto.
-  objeto(tipo) {
+  objeto(tipo, opcoes = {}) {
     const c = this.cena;
     const L = this.camFrente;
     const cx = this.W / 2;
@@ -321,8 +321,66 @@ export class Cinema {
       g.lineBetween(x - 6, riscada.y + 24, x + riscada.width + 8, riscada.y + 32);
       linha("se eu for antes do sol voltar...");
       linha("???", 52);
+    } else if (tipo === "bilhete") {
+      // pedaço de papel amassado achado na palha. A TINTA é a pista (cada morador tem a sua cor de caneta).
+      const w = 820;
+      const h = 520;
+      papel(w, h);
+      const g = add(c.add.graphics());
+      g.fillStyle(0xe9dfc4);
+      g.lineStyle(4, 0x8f8466);
+      const pts = [[-w / 2, -h / 2 + 20], [-w / 4, -h / 2], [w / 8, -h / 2 + 16], [w / 2, -h / 2 + 4], [w / 2 - 14, h / 2 - 30],
+        [w / 5, h / 2], [-w / 6, h / 2 - 18], [-w / 2 + 10, h / 2 - 4]].map(([x, y]) => new Phaser.Math.Vector2(cx + x, cy + y));
+      g.fillPoints(pts, true);
+      g.strokePoints(pts, true);
+      g.lineStyle(3, 0xcfc3a2); // vincos de papel amassado
+      g.lineBetween(cx - 300, cy - 200, cx - 60, cy + 210);
+      g.lineBetween(cx + 120, cy - 230, cx + 330, cy + 120);
+      for (let i = 0; i < 7; i++) { // fiapos de palha grudados
+        g.lineStyle(5, 0xc9a24e);
+        const x = cx - w / 2 + 40 + i * 110;
+        g.lineBetween(x, cy + h / 2 - 40 - (i % 3) * 16, x + 50, cy + h / 2 - 70 - (i % 2) * 22);
+      }
+      const tinta = opcoes.tinta || "#6b5844";
+      add(c.add.text(cx, cy - 10, opcoes.texto || "", { fontFamily: '"Caveat Brush", sans-serif', fontSize: "44px", color: tinta, align: "center", wordWrap: { width: w - 110 }, lineSpacing: 8 }).setOrigin(0.5));
+    } else if (tipo === "celular") {
+      // o celular do Chaz: notificação de vídeo salvo ou o vídeo (tela preta) tocando
+      const w = 380;
+      const h = 700;
+      papel(w, h);
+      add(c.add.rectangle(cx, cy, w, h, 0x111016).setStrokeStyle(10, 0x2b2a33));
+      add(c.add.rectangle(cx, cy, w - 40, h - 90, opcoes.tela === "video" ? 0x000000 : 0x1c2440));
+      const fonte = "Trebuchet MS, Verdana, sans-serif";
+      add(c.add.text(cx, cy - h / 2 + 70, "19:47", { fontFamily: fonte, fontSize: "40px", color: "#e8e8f0" }).setOrigin(0.5));
+      if (opcoes.tela === "video") {
+        add(c.add.text(cx, cy - 40, opcoes.audio || "", { fontFamily: '"Patrick Hand", sans-serif', fontSize: "38px", color: "#6d6a7a", align: "center" }).setOrigin(0.5));
+        const barra = add(c.add.rectangle(cx - w / 2 + 50, cy + h / 2 - 110, 0, 8, 0xd0d0e0).setOrigin(0, 0.5));
+        add(c.add.rectangle(cx - w / 2 + 50, cy + h / 2 - 110, w - 100, 8, 0x3a3a48).setOrigin(0, 0.5)).setDepth(-1);
+        const tempo = add(c.add.text(cx + w / 2 - 50, cy + h / 2 - 80, "0:00 / 0:47", { fontFamily: fonte, fontSize: "26px", color: "#a0a0b4" }).setOrigin(1, 0));
+        const dur = opcoes.ms || 6000;
+        this.cena.tweens.addCounter({ from: 0, to: 1, duration: dur, onUpdate: (tw) => {
+          const v = tw.getValue();
+          barra.width = (w - 100) * v * (opcoes.ate || 0.12);
+          const sgs = Math.floor(47 * v * (opcoes.ate || 0.12));
+          tempo.setText(`0:${String(sgs).padStart(2, "0")} / 0:47`);
+        } });
+        L.bringToTop(barra);
+      } else {
+        const caixa = add(c.add.rectangle(cx, cy - h / 2 + 200, w - 80, 120, 0xf0f0f6, 0.95).setStrokeStyle(2, 0xffffff));
+        add(c.add.text(cx - w / 2 + 64, caixa.y - 36, "GALERIA", { fontFamily: fonte, fontSize: "22px", color: "#55556a" }));
+        add(c.add.text(cx - w / 2 + 64, caixa.y - 6, opcoes.aviso || "Novo vídeo salvo — 0:47", { fontFamily: fonte, fontSize: "28px", color: "#16161e" }));
+      }
     }
     return L;
+  }
+
+  // escurece (ou esquenta) quem está em cena: personagens no breu ficam azulados, na luz da lanterna voltam
+  tingir(cor = 0xffffff) {
+    for (const at of Object.values(this.atores)) {
+      const alvos = [at.img, ...(at.olhos || []).flatMap((o) => [o.iris, o.lid])];
+      alvos.forEach((o) => (cor === 0xffffff ? o.clearTint() : o.setTint(cor)));
+      at.tinta = cor;
+    }
   }
 
   // ---------------------------------------------------------------- atores (arte em alta)
@@ -382,6 +440,7 @@ export class Cinema {
       this.cena.tweens.add({ targets: c, y: c.y + 10, duration: 90, yoyo: true, ease: "Sine.easeOut" });
     }
     const nova = this.imagem(chave, at.base).setAlpha(0);
+    if (at.tinta && at.tinta !== 0xffffff) nova.setTint(at.tinta);
     at.cont.add(nova);
     const velha = at.img;
     const olhosVelhos = at.olhos || [];
@@ -424,6 +483,7 @@ export class Cinema {
       const y = (o.y - a.pe) * at.base;
       const iris = this.cena.add.image(x, y, tex, o.olhar[at.olhar] || o.olhar.natural).setOrigin(0).setScale(at.base).setAlpha(alfa).setScrollFactor(0);
       const lid = this.cena.add.image(x, y, tex, o.palpebra[0]).setOrigin(0).setScale(at.base).setVisible(false).setScrollFactor(0);
+      if (at.tinta && at.tinta !== 0xffffff) [iris, lid].forEach((im) => im.setTint(at.tinta));
       lid.ehLid = true;
       at.cont.add([iris, lid]);
       at.olhos.push({ dados: o, iris, lid });
